@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Aleksey Ivanov. All rights reserved.
 //
 
-#define TITLE_DOWNLOAD @"DOWNLOAD"
-#define TITLE_READ @"READ"
+#define TITLE_DOWNLOAD @"СКАЧАТЬ"
+#define TITLE_READ @"ЧИТАТЬ"
 
 #import "IssueCell.h"
 

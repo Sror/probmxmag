@@ -13,6 +13,7 @@
 #define TITLE_NAVBAR @"Выпуски"
 @interface MainViewController () {
     BOOL isIpad;
+    BOOL isIos7;
 }
 
 @end
@@ -25,6 +26,8 @@
 {
     [super viewDidLoad];
     isIpad = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
+    isIos7 = [[[UIDevice currentDevice] systemVersion]floatValue]>= 7.0;
+    
     //delegates and instances
     publisher = [Publisher sharedInstance];
     newsstandDownloader = [NewsstandDownloader sharedInstance];
@@ -143,27 +146,36 @@
     return YES;
 }
 -(void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration{
-    if (isIpad)
+    if (isIpad )
     {
         if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft || toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
             NSLog(@"willRotate to landscape");
-            self.view.frame =CGRectMake(0, 0, 1024, 768);
-            self.headerImageView.frame = CGRectMake(0, 64, 1024, 255);
+            
+            if (isIos7) {
+                self.view.frame =CGRectMake(0, 0, 1024, 768);
+                self.headerImageView.frame = CGRectMake(0, 64, 1024, 255);
+                self.collectionView.frame = CGRectMake(0, 319, 1024, 449);
+            }else{
+                self.view.frame =CGRectMake(0, 44, 1024, 724);
+                self.headerImageView.frame = CGRectMake(0, 0, 1024, 255);
+                self.collectionView.frame = CGRectMake(0, 255, 1024, 513);
+            }
             //TODO header center point
             self.headerImageView.activityIndicator.center = self.headerImageView.center;
-            self.collectionView.frame = CGRectMake(0, 319, 1024, 449);
             [self.collectionViewFlowlayout setSectionInset:UIEdgeInsetsMake(10, 80, 10, 80)];
-            
         }else{
+            //portrait orientation
             NSLog(@"willRotate to portrait mode");
-            self.view.frame = CGRectMake(0, 0, 768, 1024);
-            self.headerImageView.frame = CGRectMake(-128, 64, 1024, 255);
+            if (isIos7) {
+                self.view.frame = CGRectMake(0, 0, 768, 1024);
+                self.headerImageView.frame = CGRectMake(-128, 64, 1024, 255);
+                self.collectionView.frame =CGRectMake(0, 319, 768, 705);
+            }else{
+                self.view.frame = CGRectMake(0, 44, 768, 980);
+                self.headerImageView.frame = CGRectMake(-128.0, 0.0, 1024.0, 255.0);
+                self.collectionView.frame = CGRectMake(0, 255.0, 768, 769);
+            }
             self.headerImageView.activityIndicator.center = self.headerImageView.center;
-            CGFloat center = self.headerImageView.frame.size.width/2;
-            NSLog(@"center %f",center);
-            
-            
-            self.collectionView.frame =CGRectMake(0, 319, 768, 705);
             [self.collectionViewFlowlayout setSectionInset:UIEdgeInsetsMake(10, 10, 10, 10)];
         }
     }else{
