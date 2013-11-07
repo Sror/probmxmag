@@ -29,14 +29,14 @@ extern  NSString *PublisherFailedUpdate;
 -(NSInteger)indexOfIssue:(NKIssue*)issue;
 -(NSString *)nameOfIssueAtIndex:(NSInteger)index;
 -(NSString *)titleOfIssueAtIndex:(NSInteger)index;
--(UIImage *)coverImageForIssueAtIndex:(NSInteger)index;
+-(UIImage *)coverImageForIssueAtIndex:(NSInteger)index retina:(BOOL)isRetina;
 -(NSString*)issueDescriptionAtIndex:(NSInteger)index;
--(void)setCoverOfIssueAtIndex:(NSInteger)index  completionBlock:(void(^)(UIImage *img))block ;
+-(void)setCoverOfIssueAtIndex:(NSInteger)index forRetina:(BOOL)isRetina  completionBlock:(void(^)(UIImage *img))block ;
 -(NSURL *)contentURLForIssueWithName:(NSString *)name;
 
--(UIImage *)coverImageForIssue:(NKIssue *)nkIssue;
+//-(UIImage *)coverImageForIssue:(NKIssue *)nkIssue;
 
--(UIImage*)headerImageForIssueAtIndex:(NSInteger)index;
--(void)setHeaderImageForLastIssue:(void(^)(UIImage *img))block;
+-(UIImage*)headerImageForIssueAtIndex:(NSInteger)index forRetina:(BOOL)isRetina;
+-(void)setHeaderImageOfIssueAtIndex:(NSUInteger)index forRetina:(BOOL)isRetina completionBlock:(void(^)(UIImage *img))block;
 
 @end

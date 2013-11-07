@@ -27,13 +27,16 @@
     if(status==NKIssueContentStatusAvailable) {
         [self.downloadOrShowButton setTitle:TITLE_READ forState:UIControlStateNormal];
         [self.downloadOrShowButton setAlpha:1.0];
+        self.downloadOrShowButton.layer.borderWidth = 0;
+        
         [self.progressView setAlpha:0.0];
         [self.imageView setAlpha:1.0];
         
     } else {
         if(status==NKIssueContentStatusDownloading) {
             [self.progressView setAlpha:1.0];
-            [self.imageView setAlpha:0.5];
+            //[self.imageView setAlpha:0.5];
+            [self.downloadOrShowButton setAlpha:0.0];
          
         } else {
             [self.progressView setProgress:0.0];

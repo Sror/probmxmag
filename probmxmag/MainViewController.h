@@ -11,7 +11,7 @@
 #import "Publisher.h"
 #import "NewsstandDownloader.h"
 
-@interface MainViewController : UIViewController <UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,NewsstandDownloaderDelegate>
+@interface MainViewController : UIViewController <UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,UIActionSheetDelegate,NewsstandDownloaderDelegate>
 {
     Publisher *publisher;
     NewsstandDownloader *newsstandDownloader;

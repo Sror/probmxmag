@@ -18,7 +18,7 @@
 
 +(NewsstandDownloader*)sharedInstance;
 
-//-(id)initWithPublisher:(Publisher*)thePublisher;
+-(id)initWithPublisher:(Publisher*)thePublisher;
 
 //-(void)myhandleNotification:(NSNotification*)notification;
 

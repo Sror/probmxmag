@@ -13,10 +13,11 @@
 #define kPostNotificationReceived @"com.yourkioskapp.newsstand.template.NewsstandTemplate.notificationReceived"
 
 @implementation NewsstandDownloader
-
-@synthesize delegate;
 @synthesize publisher;
-+(NewsstandDownloader*)sharedInstance{
+@synthesize delegate;
+//@synthesize publisher;
++(NewsstandDownloader*)sharedInstance {
+    NSLog(@"NewsstandDownloader sharedInstance");
     static dispatch_once_t once;
     static NewsstandDownloader *sharedInstance;
     dispatch_once(&once, ^{
@@ -24,7 +25,7 @@
     });
     return sharedInstance;
 }
-/*
+
 -(id)initWithPublisher:(Publisher*)thePublisher
 {
     self = [super init];
@@ -33,12 +34,12 @@
     {
         self.publisher = thePublisher;
         
-     //   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(myhandleNotification:) name:kPostNotificationReceived object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(myhandleNotification:) name:kPostNotificationReceived object:nil];
     }
     
     return self;
 }
- */
+
 /*
 -(void)myhandleNotification:(NSNotification*)notification
 {
@@ -67,6 +68,7 @@
 
 -(void)downloadIssueAtIndex:(NSInteger)index {
     NSLog(@"NewsstandDownloader downloadIssueAtIndex %d",index);
+
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
     NSString* issueName = [publisher nameOfIssueAtIndex:index];
     NKIssue *nkIssue = [nkLib issueWithName:issueName];
@@ -116,17 +118,52 @@
     
     NKAssetDownload *asset = [connection newsstandAssetDownload];
     NSURL* fileURL = [[asset issue] contentURL];
-   
-    NSString *fileSuffix = nil;
-    if ([[destinationURL absoluteString]hasSuffix:@"zip"]) {
-        fileSuffix = @"zip";
-        NSLog(@"Zip file suffix founded!");
-    }
+    NSLog(@"fileURL %@",fileURL);
+    NSString *issueName = [asset issue].name;
+    NSString *fullFileName= [issueName stringByAppendingString:@".pdf"];
+    NSLog(@"fileName %@",fullFileName);
+    ///
+    NSArray * paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    NSLog(@"paths %@",paths);
+    NSString *path = nil;
+    path = [[paths objectAtIndex:0] stringByAppendingPathComponent:fullFileName];
+    NSLog(@"path= %@",path);
     
-    NSLog(@"unZippingFile from %@ to %@ ",[destinationURL path],[fileURL path]);
+  //  NSString *suffix=nil;
+  
+    if ([[destinationURL absoluteString] hasSuffix:@"zip"]) {
+        NSLog(@"ZIP file suffix founded!");
+        if (![SSZipArchive unzipFileAtPath:[destinationURL path] toDestination:[fileURL path]]) {
+            NSLog(@"error to unzip file!");
+        }
+        NSLog(@"unZippingFile from %@ to %@ ",[destinationURL path],[fileURL path]);
+        
+           }
     
-    if (![SSZipArchive unzipFileAtPath:[destinationURL path] toDestination:[fileURL path]]) {
-        NSLog(@"error to unzip file!");
+    if([[destinationURL absoluteString] hasSuffix:@"fpk"]) {
+        NSLog(@"FPK file suffix founded");
+        if (![SSZipArchive unzipFileAtPath:[destinationURL path] toDestination:path]) {
+            NSLog(@"error to unzip file!");
+        }
+        NSLog(@"unZippingFile from %@ to %@ ",[destinationURL path],[fileURL path]);
+       //path = [[fileURL path]stringByAppendingPathComponent:[asset issue].name];
+        NSLog(@"path %@",path);
+        NSError *error;
+        NSArray *files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:&error];
+        NSLog(@"files %@",files);
+        for (NSString *fileName in files)
+        {
+            
+            [[NSFileManager defaultManager] copyItemAtPath:[[path pathExtension]stringByAppendingPathComponent:fileName] toPath:[[fileURL path] stringByAppendingPathComponent:fileName] error:&error] ;
+            NSLog(@"copy item at path %@ toPath %@",[path stringByAppendingString:fileName],[[fileURL path] stringByAppendingString:fileName]);
+            if (error) {
+                NSLog(@"error to copy %@",error);
+            }
+        }
+        [[NSFileManager defaultManager] removeItemAtPath:path error:&error];
+        if (error) {
+            NSLog(@"error to remove path %@",error);
+        }
     }
     //remove downloaded zip file
     NSError *removingError;
@@ -136,19 +173,20 @@
     }else{
         NSLog(@"success removing file");
     }
+
+    
     // update the Newsstand icon
     int index=[self.publisher indexOfIssue:[asset issue]];
-    [self.publisher setCoverOfIssueAtIndex:index completionBlock:^(UIImage *img) {
+#warning check icon resolution on retina devices
+    [self.publisher setCoverOfIssueAtIndex:index forRetina:NO completionBlock:^(UIImage *img)
+    {
         dispatch_async(dispatch_get_main_queue(), ^{
             [[UIApplication sharedApplication] setNewsstandIconImage:img];
             [[UIApplication sharedApplication] setApplicationIconBadgeNumber:1];
         });
     }];
-    
    // [self updateIssueIconWithImage:[publisher coverImageForIssue:[asset issue]]];
-    
     [delegate connectionDidFinishDownloading:connection destinationURL:destinationURL];
-    
 }
 
 -(void)updateIssueIconWithImage:(UIImage*)coverImage{

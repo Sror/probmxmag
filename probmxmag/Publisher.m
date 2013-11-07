@@ -21,7 +21,7 @@ NSString *PublisherDidUpdate = @"PublisherDidUpdate";
 NSString *PublisherFailedUpdate = @"PublisherFailedUpdate";
 //NSString *PublisherMustUpdateIssuesList= @"PublisherMustUpdateIssuesList";
 //NSString *XMLNAFLocation = @"https://googledrive.com/host/0B6E2Hn-m7yvAN2NVZkRKejVXVDg/NAFexample.xml";
-NSString *XMLIssuesLocationIpad = @"https://googledrive.com/host/0B6E2Hn-m7yvAN2NVZkRKejVXVDg/issues_ipad.xml";
+NSString *XMLIssuesLocationIpad = @"http://gdurl.com/6OPR";
 NSString *XMLIssuesLocationIphone = @"https://googledrive.com/host/0B6E2Hn-m7yvAN2NVZkRKejVXVDg/issues_iphone.xml";
 
 @implementation Publisher
@@ -33,6 +33,7 @@ NSString *XMLIssuesLocationIphone = @"https://googledrive.com/host/0B6E2Hn-m7yvA
     dispatch_once(&once, ^{
         sharedInstance =[[self alloc]init];
     });
+    
     return sharedInstance;
 }
 
@@ -152,7 +153,6 @@ NSString *XMLIssuesLocationIphone = @"https://googledrive.com/host/0B6E2Hn-m7yvA
             
         }
     }];
-    
 }
 
 -(NSInteger)numberOfIssues {
@@ -180,31 +180,37 @@ NSString *XMLIssuesLocationIphone = @"https://googledrive.com/host/0B6E2Hn-m7yvA
     return  [[self.issues objectAtIndex:index]objectForKey:@"description"];
 }
 
--(UIImage *)coverImageForIssueAtIndex:(NSInteger)index{
+-(UIImage *)coverImageForIssueAtIndex:(NSInteger)index retina:(BOOL)isRetina{
+    
     //return local image if exist in CacheDirectory
     NSDictionary* issueInfo = [self.issues objectAtIndex:index];
-    NSString *coverPath=[issueInfo objectForKey:@"cover_large"];
-    /*
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-       coverPath = [issueInfo objectForKey:@"IPAD_COVER"];
+    NSString *coverPath = nil;
+    if (isRetina) {
+        coverPath = [issueInfo objectForKey:@"cover_large"];
     }else{
-        coverPath = [issueInfo objectForKey:@"IPHONE_COVER"];
+        coverPath = [issueInfo objectForKey:@"cover_small"];
     }
-   */
+    //NSString *coverPath=[issueInfo objectForKey:@"cover_large"];
     NSString *coverName=[coverPath lastPathComponent];
     /* was
     NSString *coverName = [self getBothLastComponentsFromPath:coverPath];
     NSLog(@"coverName %@",coverName);
      */
     NSString *coverFilePath = [CacheDirectory stringByAppendingPathComponent:coverName];
-    NSLog(@"coverFilePAth %@",coverFilePath);
+   
     UIImage *image = [UIImage imageWithContentsOfFile:coverFilePath];
     return image;
 }
--(UIImage*)headerImageForIssueAtIndex:(NSInteger)index{
+-(UIImage*)headerImageForIssueAtIndex:(NSInteger)index forRetina:(BOOL)isRetina {
     NSLog(@"headerImageForIssueAtIndex");
     NSDictionary *issueInfo=[self.issues objectAtIndex:index];
-    NSString *headerPath=[issueInfo objectForKey:@"header"];
+    NSString *headerPath = nil;
+    if (isRetina) {
+        headerPath = [issueInfo objectForKey:@"header_large"];
+    }else{
+        headerPath = [issueInfo objectForKey:@"header_small"];
+    }
+    //was NSString *headerPath=[issueInfo objectForKey:@"header"];
    
     NSString *headerFileName=[headerPath lastPathComponent];
     
@@ -242,19 +248,16 @@ NSString *XMLIssuesLocationIphone = @"https://googledrive.com/host/0B6E2Hn-m7yvA
     return filePath;
 }
 */
--(void)setCoverOfIssueAtIndex:(NSInteger)index  completionBlock:(void(^)(UIImage *img))block {
-    //was NSURL *coverURL = [[NSURL alloc] init];
-    /*
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-        coverURL = [NSURL URLWithString:[[self issueAtIndex:index]objectForKey:@"IPAD_COVER"]];
+-(void)setCoverOfIssueAtIndex:(NSInteger)index  forRetina:(BOOL)isRetina completionBlock:(void(^)(UIImage *img))block {
+    NSURL *coverURL= nil;
+    if (isRetina) {
+        coverURL = [NSURL URLWithString:[[self issueAtIndex:index]objectForKey:@"cover_large"]];
     }else{
-        coverURL = [NSURL URLWithString:[[self issueAtIndex:index]objectForKey:@"IPHONE_COVER"]];
+        coverURL = [NSURL URLWithString:[[self issueAtIndex:index]objectForKey:@"cover_small"]];
     }
-    */
-    //was NSString *coverFileName = [self getBothLastComponentsFromPath:[coverURL path]];
-    NSURL* coverURL = [NSURL URLWithString:[[self issueAtIndex:index]objectForKey:@"cover_large"]];
+    //NSURL* coverURL = [NSURL URLWithString:[[self issueAtIndex:index]objectForKey:@"cover_large"]];
     NSString* coverFileName=[coverURL lastPathComponent];
-    NSLog(@"coverFileName %@",coverFileName);
+   
     NSString *coverFilePath = [CacheDirectory stringByAppendingPathComponent:coverFileName];
     UIImage *image = [UIImage imageWithContentsOfFile:coverFilePath];
     if(image) {
@@ -270,16 +273,21 @@ NSString *XMLIssuesLocationIphone = @"https://googledrive.com/host/0B6E2Hn-m7yvA
                            if(image) {
                                [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
                                [imageData writeToFile:coverFilePath atomically:YES];
-                               NSLog(@"cover image has written to %@",coverFilePath);
+                              // NSLog(@"cover image has written to %@",coverFilePath);
                                block(image);
                            }
                        });
     }
 }
--(void)setHeaderImageForLastIssue:(void(^)(UIImage *img))block {
-    NSLog(@"setHeaderImageForLastIssue");
-    //was NSURL *headerURL =[[ NSURL alloc]init];
-    NSURL* headerURL = [NSURL URLWithString:[[self issueAtIndex:0] objectForKey:@"header"]];
+-(void)setHeaderImageOfIssueAtIndex:(NSUInteger)index forRetina:(BOOL)isRetina completionBlock:(void(^)(UIImage *img))block {
+    NSLog(@"setHeaderImageOfIssueAtIndex %d forRetina %d",index, (int)isRetina);
+    NSURL *headerURL =nil;
+    if (isRetina==YES) {
+        headerURL = [NSURL URLWithString:[[self issueAtIndex:0] objectForKey:@"header_large"]];
+    }else{
+        headerURL = [NSURL URLWithString:[[self issueAtIndex:0] objectForKey:@"header_small"]];
+    }
+    //NSURL* headerURL = [NSURL URLWithString:[[self issueAtIndex:0] objectForKey:@"header"]];
     NSString *headerFileName = [headerURL lastPathComponent];
     NSString *headerFilePath = [CacheDirectory stringByAppendingPathComponent:headerFileName];
     UIImage *image =[UIImage imageWithContentsOfFile:headerFilePath];
@@ -304,12 +312,13 @@ NSString *XMLIssuesLocationIphone = @"https://googledrive.com/host/0B6E2Hn-m7yvA
     }
 
 }
-
+/*
 -(UIImage *)coverImageForIssue:(NKIssue *)nkIssue
 {
     NSLog(@"coverImageForIssue");
     NSString *name = nkIssue.name;
     for(NSDictionary *issueInfo in self.issues) {
+       
         if([name isEqualToString:[issueInfo objectForKey:@"name"]])
         {
             NSString *coverPath = [issueInfo objectForKey:@"SOURCE"];
@@ -324,6 +333,7 @@ NSString *XMLIssuesLocationIphone = @"https://googledrive.com/host/0B6E2Hn-m7yvA
     return nil;
 
 }
+ */
 /*
 -(NSString *)downloadPathForIssue:(NKIssue *)nkIssue {
     NSLog(@"downloadPathForIssue %@",[[nkIssue.contentURL path] stringByAppendingPathComponent:[nkIssue.name stringByAppendingString:@".pdf"]]);
