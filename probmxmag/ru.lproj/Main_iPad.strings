@@ -1,0 +1,9 @@
+
+/* Class = "IBUILabel"; text = "Title of issue"; ObjectID = "9gi-Sn-jvm"; */
+"9gi-Sn-jvm.text" = "Title of issue";
+
+/* Class = "IBUIButton"; normalTitle = "СКАЧАТЬ"; ObjectID = "I0j-rO-Iyi"; */
+"I0j-rO-Iyi.normalTitle" = "СКАЧАТЬ";
+
+/* Class = "IBUINavigationItem"; title = "Issues"; ObjectID = "vbl-A7-GT3"; */
+"vbl-A7-GT3.title" = "Выпуски";

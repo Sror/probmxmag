@@ -65,7 +65,6 @@
     }
 }
 */
-
 -(void)downloadIssueAtIndex:(NSInteger)index {
     NSLog(@"NewsstandDownloader downloadIssueAtIndex %d",index);
 

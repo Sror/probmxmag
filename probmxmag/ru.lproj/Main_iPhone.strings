@@ -1,0 +1,9 @@
+
+/* Class = "IBUILabel"; text = "Label"; ObjectID = "UCo-gO-SNp"; */
+"UCo-gO-SNp.text" = "Label";
+
+/* Class = "IBUIButton"; normalTitle = "СКАЧАТЬ"; ObjectID = "k2T-ty-sYs"; */
+"k2T-ty-sYs.normalTitle" = "СКАЧАТЬ";
+
+/* Class = "IBUINavigationItem"; title = "Issues"; ObjectID = "xa3-M9-67D"; */
+"xa3-M9-67D.title" = "Выпуски";

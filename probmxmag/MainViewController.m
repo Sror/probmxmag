@@ -13,7 +13,10 @@
 #define TITLE_NAVBAR @"Выпуски"
 
 //#import "MFDocumentViewController.h"
-//#import "ReaderViewController.h"
+#import "ReaderViewController.h"
+//#import "DocumentViewController.h" //?
+
+@class MFDocumentManager;
 
 @interface MainViewController () {
     BOOL isIpad;
@@ -231,29 +234,31 @@
     IssueCell* tile = (IssueCell*)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
     [tile updateCellInformationWithStatus:NKIssueContentStatusDownloading];
 }
-
+#pragma  mark - OpenIssue in FastPdfKitReader
 -(void)openIssueinFastPdfReader:(NKIssue*)issue
 {
     [[NKLibrary sharedLibrary] setCurrentlyReadingIssue:issue];
     NSString *documentName=[issue.name stringByAppendingString:@".pdf"];
     NSURL *documentURL = [NSURL fileURLWithPath:[[issue.contentURL path] stringByAppendingPathComponent:documentName]];
     NSLog(@"document URL = %@",documentURL);
-    NSLog(@"documentName %@",documentName);
- /*
+
     //NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *thumbnailsPath = [[documentURL path] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@",documentName]];
     
     MFDocumentManager *documentManager = [[MFDocumentManager alloc]initWithFileUrl:documentURL];
     ReaderViewController *pdfViewController = [[ReaderViewController alloc]initWithDocumentManager:documentManager];
+    [pdfViewController setDocumentDelegate:pdfViewController];
     pdfViewController.fpkAnnotationsEnabled = YES;
     documentManager.resourceFolder = thumbnailsPath;
     pdfViewController.documentId = documentName;
+    
     [self presentViewController:pdfViewController animated:YES completion:nil];
- */   
+    
 }
 #pragma mark - 
 -(BOOL)shouldAutorotate
 {
+    [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
     return YES;
 }
 

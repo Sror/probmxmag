@@ -12,7 +12,7 @@
 #import "XMLParser.h"
 
 //test for JSON//
-#import "Constants.h"
+//#import "Constants.h"
 
 #define CacheDirectory [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0]
 #define kBgQueue dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
@@ -45,7 +45,7 @@ NSString *XMLIssuesLocationIphone = @"https://googledrive.com/host/0B6E2Hn-m7yvA
     }
     return self;
 }
-
+/*
 
 //////////TEST FOR JSON/////
 -(void)getIssueJSON{
@@ -55,6 +55,7 @@ NSString *XMLIssuesLocationIphone = @"https://googledrive.com/host/0B6E2Hn-m7yvA
                                withObject:data waitUntilDone:YES];
     });
 }
+
 - (void)fetchedData:(NSData *)responseData {
     //parse out the json data
     NSError* error;
@@ -69,6 +70,7 @@ NSString *XMLIssuesLocationIphone = @"https://googledrive.com/host/0B6E2Hn-m7yvA
     NSLog(@"json: %@", json);
 }
 //////////TEST FOR JSON/////
+*/
 
 -(NSString*)getIssuesLocation {
     
