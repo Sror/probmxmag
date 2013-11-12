@@ -7,6 +7,11 @@
 //
 
 #import "AppDelegate.h"
+//import urbanairship push notification service
+#import "UAirship.h"
+#import "UAConfig.h"
+#import "UAPush.h"
+
 
 @implementation AppDelegate
 
@@ -18,7 +23,7 @@
 {
     self.storeManager = [[StoreManager alloc] init];
     [[SKPaymentQueue defaultQueue] addTransactionObserver:self.storeManager];
-    
+    NSLog(@"launchOptions %@",launchOptions);
     // Let the device know we want to handle Newsstand push notifications
     [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeNewsstandContentAvailability];
     
@@ -40,6 +45,22 @@
             });
         }
     }
+    
+    //configure urban aipship
+    UAConfig *config = [UAConfig defaultConfig];
+
+    // Call takeOff (which creates the UAirship singleton)
+    [config setAnalyticsEnabled:NO];
+    [UAirship takeOff:config];
+    // Request a custom set of notification types
+    [UAPush shared].notificationTypes = (UIRemoteNotificationTypeBadge |
+                                         UIRemoteNotificationTypeSound |
+                                         UIRemoteNotificationTypeAlert |
+                                         UIRemoteNotificationTypeNewsstandContentAvailability);
+    // For debugging - allow multiple pushes per day
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"NKDontThrottleNewsstandContentNotifications"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+  
     return YES;
 }
 							

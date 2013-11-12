@@ -9,7 +9,7 @@
 #import "MainViewController.h"
 #import "HeaderImageView.h"
 #import "IssueCell.h"
-
+#import "Reachability.h"
 
 #define PublisherErrorMessage @"Cannot get issues from publisher server. Try to refresh again."
 #define TITLE_NAVBAR @"Выпуски"
@@ -220,6 +220,7 @@
 #pragma mark - UICollectionViewDelegate
 -(void)collectionView:(UICollectionView *)cv didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
     //IssueCell *cell=(IssueCell*)[cv dequeueReusableCellWithReuseIdentifier:@"IssueCell" forIndexPath:indexPath];
+    
     [cv deselectItemAtIndexPath:indexPath animated:YES];
     [self showOrDownloadIssueAtIndex:indexPath.row];
    
@@ -232,15 +233,35 @@
         [self openIssueinFastPdfReader:nkIssue];
     } else if(nkIssue.status==NKIssueContentStatusNone) {
         NSLog(@"download issue at index %d",index);
-        [self downloadIssueAtIndex:index];
+        Reachability *reachability = [Reachability reachabilityForInternetConnection];
+        [reachability startNotifier];
+        NetworkStatus netStatus = [reachability currentReachabilityStatus];
+        if (netStatus == NotReachable) {
+            UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Ошибка" message:@"Проверьте интернет подключение" delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+            [alert show];
+            
+        }else if (netStatus == ReachableViaWiFi)
+        {
+            [self downloadIssueAtIndex:index];
+        }else if (netStatus == ReachableViaWWAN){
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Внимание!" message:@"Для загрузки выпусков рекомендуется использовать WiFi соединение. Продолжить загрузку с помощью сотовой связи? Стоимость загрузки зависит от тарифов Вашего сотового оператора." delegate:self cancelButtonTitle:@"Продолжить" otherButtonTitles:@"Отменить", nil];
+            [alert show];
+        }
+  
     }
     else if(nkIssue.status ==NKIssueContentStatusDownloading){
         NSLog(@"Issue already downloading");
         //TODO pause downloading
-        
+        [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+        [nkLib removeIssue:nkIssue];
+        [publisher addIssuesInNewsstandLibrary];
+        IssueCell* tile = (IssueCell*)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
+        [tile updateCellInformationWithStatus:NKIssueContentStatusNone];
+        NSLog(@"nklib %@",nkLib.issues);
     }
 }
 -(void)downloadIssueAtIndex:(NSInteger)index {
+
     [newsstandDownloader downloadIssueAtIndex:index];
     IssueCell* tile = (IssueCell*)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
     [tile updateCellInformationWithStatus:NKIssueContentStatusDownloading];

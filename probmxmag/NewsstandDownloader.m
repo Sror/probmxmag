@@ -80,7 +80,7 @@
     NKAssetDownload *assetDownload = [nkIssue addAssetWithRequest:req];
     [assetDownload downloadWithDelegate:self];
     [assetDownload setUserInfo:[NSDictionary dictionaryWithObjectsAndKeys:
-                                [NSNumber numberWithInt:index],@"Index",
+                                [NSNumber numberWithInt:index],@"Index",issueName,@"issueName",
                                 nil]];
 }
 
