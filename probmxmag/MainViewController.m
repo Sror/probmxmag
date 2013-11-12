@@ -9,6 +9,8 @@
 #import "MainViewController.h"
 #import "HeaderImageView.h"
 #import "IssueCell.h"
+
+
 #define PublisherErrorMessage @"Cannot get issues from publisher server. Try to refresh again."
 #define TITLE_NAVBAR @"Выпуски"
 
@@ -32,6 +34,7 @@
 
 - (void)viewDidLoad
 {
+   
     [super viewDidLoad];
     isIpad = (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
     isIos7 = [[[UIDevice currentDevice] systemVersion]floatValue]>= 7.0;
@@ -48,8 +51,16 @@
     newsstandDownloader = [NewsstandDownloader sharedInstance];
     newsstandDownloader = [[NewsstandDownloader alloc] initWithPublisher:publisher];
     newsstandDownloader.delegate = self;
+    StoreManager *storeManager = [AppDelegate instance].storeManager;
+    [storeManager setDelegate:self];
     
-    [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
+    if ([storeManager isSubscribed]) {
+        NSLog(@"already subscribed!");
+    }else{
+        NSLog(@"not subscribed!");
+    }
+    
+   // [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
     
     // set settings bar button
     UIBarButtonItem *settingsButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"settings.png"]
@@ -242,27 +253,48 @@
     NSURL *documentURL = [NSURL fileURLWithPath:[[issue.contentURL path] stringByAppendingPathComponent:documentName]];
     NSLog(@"document URL = %@",documentURL);
 
+    NSString* resourceFolder = [issue.contentURL path];
+    NSLog(@"resourceFolder %@",resourceFolder); 
     //NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *thumbnailsPath = [[documentURL path] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@",documentName]];
+    //NSString *thumbnailsPath = [[documentURL path] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@",documentName]];
     
     MFDocumentManager *documentManager = [[MFDocumentManager alloc]initWithFileUrl:documentURL];
+    
+    documentManager.resourceFolder = resourceFolder;
+    
     ReaderViewController *pdfViewController = [[ReaderViewController alloc]initWithDocumentManager:documentManager];
-    [pdfViewController setDocumentDelegate:pdfViewController];
-    pdfViewController.fpkAnnotationsEnabled = YES;
-    documentManager.resourceFolder = thumbnailsPath;
     pdfViewController.documentId = documentName;
     
+    [pdfViewController setDocumentDelegate:pdfViewController];
+    pdfViewController.fpkAnnotationsEnabled = YES;
+    //documentManager.resourceFolder = thumbnailsPath;
+    //pdfViewController.documentId = documentName;
+
     [self presentViewController:pdfViewController animated:YES completion:nil];
     
 }
 #pragma mark - 
 -(BOOL)shouldAutorotate
 {
-    [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
-    return YES;
+    NSLog(@"shouldAutorotate");
+    return NO;
 }
-
+-(void)viewWillLayoutSubviews{
+    NSLog(@"viewWillLayoutSubviews");
+    [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
+}
 -(void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration{
+    NSLog(@"willRotate");
+    if (isIpad) {
+        if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft || toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
+            NSLog(@"willRotate to landscape");
+            [self.collectionViewFlowlayout setSectionInset:UIEdgeInsetsMake(10, 80, 10, 80)];
+        }else {
+            NSLog(@"will rotate to portrait orientation");
+            [self.collectionViewFlowlayout setSectionInset:UIEdgeInsetsMake(10, 10, 10, 10)];
+        }
+    }
+    /*
     if (isIpad )
     {
         if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft || toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
@@ -308,6 +340,8 @@
         //to do iphone implementation
         
     }
+     */
+    
 }
 
 #pragma mark - NewsstandDownloaderDelegate methods
@@ -353,7 +387,6 @@
     
 }
 #pragma mark - IssueCellDelegate
-
 -(void)trashContent {
     NSLog(@"trashContent method implementation");
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
@@ -365,16 +398,24 @@
     [self.collectionView reloadData];
 }
 
+#pragma mark - StoreManagerDelegate
+-(void)subscriptionCompletedWith:(BOOL)success{
+    if (success) {
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Спасибо" message:@"Подписка оформлена!" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    }
+}
+
 #pragma mark- UIActionSheetDelegate
 -(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
     NSLog(@"actionSheet clickedButtonAtIndex %d",buttonIndex);
-    /*
+    
     if (buttonIndex==0 || buttonIndex==1) {
-        //purchase
+        //subscribing
         StoreManager *storeManager=[AppDelegate instance].storeManager;
         [storeManager subscribeToMagazine];
     }
-    */
+    
     if (buttonIndex==2) {
         [self trashContent];
     }

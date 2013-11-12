@@ -1513,6 +1513,12 @@
 		[aBarButtonItem release];
         
 		*/
+        // Space
+        
+        aBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+        [items addObject:aBarButtonItem];
+        [aBarButtonItem release];
+
 		// Outline.
         aButton = [UIButton buttonWithType:UIButtonTypeCustom];
         aButton.bounds = CGRectMake( 0, 0, 24 , 24);
@@ -1746,10 +1752,6 @@
 	self.changeLeadButton = nil;
     
     [super viewDidUnload];
-}
-
--(BOOL)shouldAutorotate {
-    return YES;
 }
 
 -(NSUInteger)supportedInterfaceOrientations {

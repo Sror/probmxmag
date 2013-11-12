@@ -48,6 +48,8 @@
 		6C3B8337182BB92C007384B3 /* TextDisplayView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6C3B830F182BB92C007384B3 /* TextDisplayView.xib */; };
 		6C3B8338182BB92C007384B3 /* TextDisplayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C3B8311182BB92C007384B3 /* TextDisplayViewController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		6C3B8339182BB92C007384B3 /* TextSearchOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C3B8314182BB92C007384B3 /* TextSearchOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		6C834AE0182D289200AB2CF7 /* ExtendNSLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C834ADF182D289200AB2CF7 /* ExtendNSLog.m */; };
+		6C834AE4182D2CA200AB2CF7 /* StoreManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C834AE3182D2CA200AB2CF7 /* StoreManager.m */; };
 		6C8A9C1E182CCE15002800C5 /* FPKReaderBundle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 6C8A9C1D182CCE15002800C5 /* FPKReaderBundle.bundle */; };
 		6CB6B7E41828DD8A00CB9BC2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6CB6B7E31828DD8A00CB9BC2 /* Images.xcassets */; };
 		6CB6B7E71828E04800CB9BC2 /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6CB6B7E51828E04800CB9BC2 /* icon@2x.png */; };
@@ -193,6 +195,10 @@
 		6C3B8312182BB92C007384B3 /* TextDisplayViewControllerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextDisplayViewControllerDelegate.h; sourceTree = "<group>"; };
 		6C3B8313182BB92C007384B3 /* TextSearchOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextSearchOperation.h; sourceTree = "<group>"; };
 		6C3B8314182BB92C007384B3 /* TextSearchOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextSearchOperation.m; sourceTree = "<group>"; };
+		6C834ADE182D289200AB2CF7 /* ExtendNSLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtendNSLog.h; sourceTree = "<group>"; };
+		6C834ADF182D289200AB2CF7 /* ExtendNSLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExtendNSLog.m; sourceTree = "<group>"; };
+		6C834AE2182D2CA200AB2CF7 /* StoreManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoreManager.h; sourceTree = "<group>"; };
+		6C834AE3182D2CA200AB2CF7 /* StoreManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoreManager.m; sourceTree = "<group>"; };
 		6C8A9C1D182CCE15002800C5 /* FPKReaderBundle.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FPKReaderBundle.bundle; sourceTree = "<group>"; };
 		6CB6B7E31828DD8A00CB9BC2 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		6CB6B7E51828E04800CB9BC2 /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2x.png"; sourceTree = "<group>"; };
@@ -297,6 +303,8 @@
 		6C3B82A9182BB8E2007384B3 /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				6C834ADE182D289200AB2CF7 /* ExtendNSLog.h */,
+				6C834ADF182D289200AB2CF7 /* ExtendNSLog.m */,
 				6C3B82AA182BB8E2007384B3 /* Reachability.h */,
 				6C3B82AB182BB8E3007384B3 /* Reachability.m */,
 				6C3B82AC182BB8E3007384B3 /* SSZipArchive */,
@@ -458,6 +466,15 @@
 			path = TextSearch;
 			sourceTree = "<group>";
 		};
+		6C834AE1182D2CA200AB2CF7 /* StoreManager */ = {
+			isa = PBXGroup;
+			children = (
+				6C834AE2182D2CA200AB2CF7 /* StoreManager.h */,
+				6C834AE3182D2CA200AB2CF7 /* StoreManager.m */,
+			);
+			path = StoreManager;
+			sourceTree = "<group>";
+		};
 		6CDB07C5181E46D50048BF65 = {
 			isa = PBXGroup;
 			children = (
@@ -509,6 +526,7 @@
 				6C3B82A5182BB85D007384B3 /* XMLParser */,
 				6C3B82A9182BB8E2007384B3 /* ThirdParty */,
 				6C3B82BF182BB92B007384B3 /* FastPdfKit */,
+				6C834AE1182D2CA200AB2CF7 /* StoreManager */,
 				6CDB0857181EE5480048BF65 /* NewsstandDownloader.h */,
 				6CDB0858181EE5480048BF65 /* NewsstandDownloader.m */,
 				6CDB0850181EDDEE0048BF65 /* Publisher.h */,
@@ -717,10 +735,12 @@
 				6CDB07DE181E46D50048BF65 /* main.m in Sources */,
 				6CDB081E181E74FF0048BF65 /* IssueCell.m in Sources */,
 				6C3B82BA182BB8E3007384B3 /* ioapi.c in Sources */,
+				6C834AE4182D2CA200AB2CF7 /* StoreManager.m in Sources */,
 				6C3B82BB182BB8E3007384B3 /* mztools.c in Sources */,
 				6C3B8339182BB92C007384B3 /* TextSearchOperation.m in Sources */,
 				6C3B8330182BB92C007384B3 /* NotificationFactory.m in Sources */,
 				6C3B8325182BB92C007384B3 /* AudioViewController.m in Sources */,
+				6C834AE0182D289200AB2CF7 /* ExtendNSLog.m in Sources */,
 				6C3B8333182BB92C007384B3 /* SearchResultView.m in Sources */,
 				6C3B82BC182BB8E3007384B3 /* unzip.c in Sources */,
 				6C3B8332182BB92C007384B3 /* SearchResultCellView.m in Sources */,

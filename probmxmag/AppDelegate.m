@@ -10,9 +10,14 @@
 
 @implementation AppDelegate
 
++(AppDelegate*)instance {
+    return  [[UIApplication sharedApplication]delegate];
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    
+    self.storeManager = [[StoreManager alloc] init];
+    [[SKPaymentQueue defaultQueue] addTransactionObserver:self.storeManager];
     
     // Let the device know we want to handle Newsstand push notifications
     [application registerForRemoteNotificationTypes:UIRemoteNotificationTypeNewsstandContentAvailability];

@@ -7,9 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "StoreManager.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
+@property (nonatomic, strong) StoreManager *storeManager;
+
++(AppDelegate*)instance;
 
 @end

@@ -117,21 +117,22 @@
     
     NKAssetDownload *asset = [connection newsstandAssetDownload];
     NSURL* fileURL = [[asset issue] contentURL];
-    NSLog(@"fileURL %@",fileURL);
     NSString *issueName = [asset issue].name;
-    NSString *fullFileName= [issueName stringByAppendingString:@".pdf"];
-    NSLog(@"fileName %@",fullFileName);
-    ///
-    NSArray * paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-    NSLog(@"paths %@",paths);
-    NSString *path = nil;
-    path = [[paths objectAtIndex:0] stringByAppendingPathComponent:fullFileName];
-    NSLog(@"path= %@",path);
-    
-  //  NSString *suffix=nil;
-  
+    NSString *fileName= [issueName stringByAppendingString:@".pdf"];
+
+    //.PDF issue file
+    if ([[destinationURL absoluteString] hasSuffix:@"pdf"]) {
+        NSError *error;
+        NSLog(@"PDF file suffix found");
+        [[NSFileManager defaultManager] moveItemAtPath:[destinationURL path] toPath:[[fileURL path] stringByAppendingString:fileName] error:&error];
+        if (error) {
+            NSLog(@"error to move pdf file: %@",error.localizedDescription);
+        }
+    }
+
+    // .ZIP issue file
     if ([[destinationURL absoluteString] hasSuffix:@"zip"]) {
-        NSLog(@"ZIP file suffix founded!");
+        NSLog(@"ZIP file suffix found!");
         if (![SSZipArchive unzipFileAtPath:[destinationURL path] toDestination:[fileURL path]]) {
             NSLog(@"error to unzip file!");
         }
@@ -139,29 +140,35 @@
         
            }
     
-    if([[destinationURL absoluteString] hasSuffix:@"fpk"]) {
-        NSLog(@"FPK file suffix founded");
-        if (![SSZipArchive unzipFileAtPath:[destinationURL path] toDestination:path]) {
+    //.FPK issue file
+    if([[destinationURL absoluteString] hasSuffix:@"fpk"])
+    {
+        NSLog(@"FPK file suffix found");
+        if (![SSZipArchive unzipFileAtPath:[destinationURL path] toDestination:[fileURL path]]) {
             NSLog(@"error to unzip file!");
         }
-        NSLog(@"unZippingFile from %@ to %@ ",[destinationURL path],[fileURL path]);
-       //path = [[fileURL path]stringByAppendingPathComponent:[asset issue].name];
-        NSLog(@"path %@",path);
+        NSLog(@"unZippingFile from %@ to %@ ",[destinationURL path],[[fileURL path] stringByAppendingPathComponent:issueName]);
         NSError *error;
-        NSArray *files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:path error:&error];
+        NSArray *files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[[fileURL path] stringByAppendingPathComponent:issueName] error:&error];
         NSLog(@"files %@",files);
+        
         for (NSString *fileName in files)
         {
+            NSString *filePath = [[fileURL path] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@/%@",issueName,fileName]];
+            NSLog(@"filePath %@",filePath);
+            [[NSFileManager defaultManager] moveItemAtPath:filePath toPath:[[fileURL path] stringByAppendingPathComponent:fileName] error:&error];
             
-            [[NSFileManager defaultManager] copyItemAtPath:[[path pathExtension]stringByAppendingPathComponent:fileName] toPath:[[fileURL path] stringByAppendingPathComponent:fileName] error:&error] ;
-            NSLog(@"copy item at path %@ toPath %@",[path stringByAppendingString:fileName],[[fileURL path] stringByAppendingString:fileName]);
-            if (error) {
+            NSLog(@"moved item at path %@ toPath %@",[[[fileURL path]
+                                                      stringByAppendingPathComponent:issueName] stringByAppendingPathComponent:fileName],[[fileURL path] stringByAppendingString:fileName]);
+            if (error)
+            {
                 NSLog(@"error to copy %@",error);
             }
         }
-        [[NSFileManager defaultManager] removeItemAtPath:path error:&error];
+        //remove issueName folder
+        [[NSFileManager defaultManager] removeItemAtPath:[[fileURL path]stringByAppendingPathComponent:issueName] error:&error];
         if (error) {
-            NSLog(@"error to remove path %@",error);
+            NSLog(@"error to remove %@ folder ",[[fileURL path]stringByAppendingPathComponent:issueName]);
         }
     }
     //remove downloaded zip file
@@ -170,10 +177,8 @@
     if (removingError) {
         NSLog(@"Error to remove file:%@",removingError.localizedDescription);
     }else{
-        NSLog(@"success removing file");
+        NSLog(@"success removing file %@",[destinationURL path]);
     }
-
-    
     // update the Newsstand icon
     int index=[self.publisher indexOfIssue:[asset issue]];
 #warning check icon resolution on retina devices

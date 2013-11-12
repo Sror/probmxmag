@@ -10,11 +10,14 @@
 #import "HeaderImageView.h"
 #import "Publisher.h"
 #import "NewsstandDownloader.h"
+#import "AppDelegate.h"
+#import "StoreManager.h"
 
-@interface MainViewController : UIViewController <UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,UIActionSheetDelegate,NewsstandDownloaderDelegate>
+@interface MainViewController : UIViewController <UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,UIActionSheetDelegate,NewsstandDownloaderDelegate,StoreManagerDelegate>
 {
     Publisher *publisher;
     NewsstandDownloader *newsstandDownloader;
+    
 }
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
