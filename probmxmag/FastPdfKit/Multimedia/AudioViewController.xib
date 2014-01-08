@@ -65,7 +65,7 @@
     </objects>
     <resources>
         <image name="close.png" width="24" height="24"/>
-        <image name="hud_player.png" width="400" height="100"/>
+        <image name="hud_player.png" width="24" height="24"/>
         <image name="play_player.png" width="24" height="24"/>
     </resources>
 </document>

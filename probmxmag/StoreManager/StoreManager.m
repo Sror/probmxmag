@@ -8,7 +8,7 @@
 #define DocumentsDirectory [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, \
 NSUserDomainMask, YES) objectAtIndex:0]
 
-#define kFreeSubscription @"com.yourkioskapp.probmxmag.subscr.free "
+#define kFreeSubscription @"com.yourkioskapp.probmxmag.subscription.free2"
 
 #define kFreeSubscriptionReceiptId @"com.yourkioskapp.probmxmag.subscr.free.receipt"
 

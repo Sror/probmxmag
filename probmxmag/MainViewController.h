@@ -13,13 +13,15 @@
 #import "AppDelegate.h"
 #import "StoreManager.h"
 
-@interface MainViewController : UIViewController <UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,UIActionSheetDelegate,NewsstandDownloaderDelegate,StoreManagerDelegate>
+@class MFDocumentManager;
+
+@interface MainViewController : UIViewController <UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,UIActionSheetDelegate,UIAlertViewDelegate,NewsstandDownloaderDelegate,StoreManagerDelegate>
 {
-    Publisher *publisher;
+   // Publisher *publisher;
     NewsstandDownloader *newsstandDownloader;
     
 }
-
+@property (nonatomic, strong) Publisher* publisher;
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
 @property (weak, nonatomic) IBOutlet UICollectionViewFlowLayout *collectionViewFlowlayout;
 @property (weak, nonatomic) IBOutlet HeaderImageView *headerImageView;

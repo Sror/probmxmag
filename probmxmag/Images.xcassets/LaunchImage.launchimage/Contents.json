@@ -5,109 +5,126 @@
       "idiom" : "iphone",
       "extent" : "full-screen",
       "minimum-system-version" : "7.0",
+      "filename" : "заставка IPhone 640х960-1.png",
+      "scale" : "2x"
+    },
+    {
+      "extent" : "full-screen",
+      "idiom" : "iphone",
+      "subtype" : "retina4",
+      "filename" : "default-568h.png",
+      "minimum-system-version" : "7.0",
+      "orientation" : "portrait",
+      "scale" : "2x"
+    },
+    {
+      "orientation" : "portrait",
+      "idiom" : "ipad",
+      "extent" : "full-screen",
+      "minimum-system-version" : "7.0",
+      "filename" : "Заставка iPad 1024 vert-2.png",
+      "scale" : "1x"
+    },
+    {
+      "orientation" : "landscape",
+      "idiom" : "ipad",
+      "extent" : "full-screen",
+      "minimum-system-version" : "7.0",
+      "filename" : "Заставка iPad 1024 lan-2.png",
+      "scale" : "1x"
+    },
+    {
+      "orientation" : "portrait",
+      "idiom" : "ipad",
+      "extent" : "full-screen",
+      "minimum-system-version" : "7.0",
+      "filename" : "Заставка iPad 2048 vert-2.png",
+      "scale" : "2x"
+    },
+    {
+      "orientation" : "landscape",
+      "idiom" : "ipad",
+      "extent" : "full-screen",
+      "minimum-system-version" : "7.0",
+      "filename" : "Заставка iPad 2048 lan-2.png",
       "scale" : "2x"
     },
     {
       "orientation" : "portrait",
       "idiom" : "iphone",
       "extent" : "full-screen",
-      "minimum-system-version" : "7.0",
+      "filename" : "заставка IPhone 480х320.png",
+      "scale" : "1x"
+    },
+    {
+      "orientation" : "portrait",
+      "idiom" : "iphone",
+      "extent" : "full-screen",
+      "filename" : "заставка IPhone 640х960.png",
+      "scale" : "2x"
+    },
+    {
+      "orientation" : "portrait",
+      "idiom" : "iphone",
+      "extent" : "full-screen",
+      "filename" : "default-568h-1.png",
       "subtype" : "retina4",
       "scale" : "2x"
     },
     {
       "orientation" : "portrait",
       "idiom" : "ipad",
-      "extent" : "full-screen",
-      "minimum-system-version" : "7.0",
-      "scale" : "1x"
-    },
-    {
-      "orientation" : "landscape",
-      "idiom" : "ipad",
-      "extent" : "full-screen",
-      "minimum-system-version" : "7.0",
-      "scale" : "1x"
-    },
-    {
-      "orientation" : "portrait",
-      "idiom" : "ipad",
-      "extent" : "full-screen",
-      "minimum-system-version" : "7.0",
-      "scale" : "2x"
-    },
-    {
-      "orientation" : "landscape",
-      "idiom" : "ipad",
-      "extent" : "full-screen",
-      "minimum-system-version" : "7.0",
-      "scale" : "2x"
-    },
-    {
-      "orientation" : "portrait",
-      "idiom" : "iphone",
-      "extent" : "full-screen",
-      "scale" : "1x"
-    },
-    {
-      "orientation" : "portrait",
-      "idiom" : "iphone",
-      "extent" : "full-screen",
-      "scale" : "2x"
-    },
-    {
-      "orientation" : "portrait",
-      "idiom" : "iphone",
-      "extent" : "full-screen",
-      "subtype" : "retina4",
-      "scale" : "2x"
-    },
-    {
-      "orientation" : "portrait",
-      "idiom" : "ipad",
       "extent" : "to-status-bar",
+      "filename" : "default~ipad_status_bar-portrait.png",
       "scale" : "1x"
     },
     {
       "orientation" : "portrait",
       "idiom" : "ipad",
       "extent" : "full-screen",
+      "filename" : "Заставка iPad 1024 vert-1.png",
       "scale" : "1x"
     },
     {
       "orientation" : "landscape",
       "idiom" : "ipad",
       "extent" : "to-status-bar",
+      "filename" : "default-statusbar~ipad.png",
       "scale" : "1x"
     },
     {
       "orientation" : "landscape",
       "idiom" : "ipad",
       "extent" : "full-screen",
+      "filename" : "Заставка iPad 1024 lan-1.png",
       "scale" : "1x"
     },
     {
       "orientation" : "portrait",
       "idiom" : "ipad",
       "extent" : "to-status-bar",
+      "filename" : "default~ipad_status_bar-portrait@2x.png",
       "scale" : "2x"
     },
     {
       "orientation" : "portrait",
       "idiom" : "ipad",
       "extent" : "full-screen",
+      "filename" : "Заставка iPad 2048 vert-1.png",
       "scale" : "2x"
     },
     {
       "orientation" : "landscape",
       "idiom" : "ipad",
       "extent" : "to-status-bar",
+      "filename" : "default-statusbar~ipad@2x.png",
       "scale" : "2x"
     },
     {
       "orientation" : "landscape",
       "idiom" : "ipad",
       "extent" : "full-screen",
+      "filename" : "Заставка iPad 2048 lan-1.png",
       "scale" : "2x"
     }
   ],

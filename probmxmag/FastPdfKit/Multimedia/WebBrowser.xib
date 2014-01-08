@@ -17,8 +17,8 @@
             <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
-                <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="4">
-                    <rect key="frame" x="0.0" y="980" width="768" height="44"/>
+                <toolbar opaque="NO" clearsContextBeforeDrawing="NO" alpha="0.84999999999999987" contentMode="scaleToFill" id="4">
+                    <rect key="frame" x="0.0" y="16" width="768" height="44"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                     <items>
                         <barButtonItem image="prew.png" id="5">
@@ -49,16 +49,17 @@
                             </connections>
                         </barButtonItem>
                     </items>
+                    <color key="tintColor" red="0.60000002379999995" green="0.60000002379999995" blue="0.60000002379999995" alpha="1" colorSpace="calibratedRGB"/>
                 </toolbar>
                 <webView multipleTouchEnabled="YES" contentMode="scaleToFill" scalesPageToFit="YES" id="11">
-                    <rect key="frame" x="0.0" y="0.0" width="768" height="980"/>
+                    <rect key="frame" x="0.0" y="60" width="768" height="964"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <dataDetectorType key="dataDetectorTypes"/>
                 </webView>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-            <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="blackOpaque"/>
+            <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
         </view>
     </objects>
     <resources>

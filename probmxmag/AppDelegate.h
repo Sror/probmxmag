@@ -8,11 +8,22 @@
 
 #import <UIKit/UIKit.h>
 #import "StoreManager.h"
+#import <NewsstandKit/NewsstandKit.h>
+#import "Publisher.h"
+#import "NewsstandDownloader.h"
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+
+
+@interface AppDelegate : UIResponder <UIApplicationDelegate>{
+    BOOL isSubscribed;
+    
+}
 
 @property (strong, nonatomic) UIWindow *window;
+@property (nonatomic,strong) Publisher *publisher;
+@property (nonatomic, strong) NewsstandDownloader * newsstandDownloader;
 @property (nonatomic, strong) StoreManager *storeManager;
+
 
 +(AppDelegate*)instance;
 

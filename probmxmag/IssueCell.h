@@ -8,13 +8,18 @@
 
 #import <UIKit/UIKit.h>
 #import <NewsstandKit/NewsstandKit.h>
+#import "FFCircularProgressView.h"
 @interface IssueCell : UICollectionViewCell
+
 @property (weak,nonatomic) IBOutlet UIImageView *imageView;
 @property (weak,nonatomic) IBOutlet UITextView *textView;
 @property (weak,nonatomic) IBOutlet UILabel *issueTitle;
 @property (weak,nonatomic) IBOutlet UIButton *downloadOrShowButton;
+@property IBOutlet UIButton *delButton;
 @property (weak,nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
-@property (weak,nonatomic) IBOutlet UIProgressView *progressView;
 
--(void)updateCellInformationWithStatus:(NKIssueContentStatus)status;
+@property (weak, nonatomic) IBOutlet FFCircularProgressView *circularProgressView;
+
+- (void) updateCellInformationWithStatus:(NKIssueContentStatus)status;
+
 @end

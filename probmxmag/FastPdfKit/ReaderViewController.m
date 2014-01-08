@@ -631,7 +631,7 @@
 	
     [self dismissAlternateViewController];
     
-    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:YES]; // Hide the status bar.
+    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationSlide]; // Hide the status bar.
 	
     
     // If there's a dismiss block defined, use it. Otherwise, try to guesstimate
@@ -789,6 +789,7 @@
 }
 
 -(void) documentViewController:(MFDocumentViewController *)dvc didReceiveURIRequest:(NSString *)uri{
+    NSLog(@"documentViewController didReceiveURIRequest %@",uri);
     
     if (![uri hasPrefix:@"#page="]) {
         
@@ -810,6 +811,55 @@
                 uriType = [uri substringToIndex:separatorRange.location];
                 //uriResource = [arrayParameter objectAtIndex:1];
                 uriResource = [uri substringFromIndex:separatorRange.location + separatorRange.length];
+                NSLog(@"uriType \"%@\"",uriType);
+                
+                
+                if ([uriType isEqualToString:@"config"]) {
+                    //sample global://?mode=1&automode=0&zoom=1.0&padding=0&shadow=NO&sides=0.1&status=NO&orientation=2,3
+                    NSLog(@"config parameters founded");
+                    NSInteger modeValue;
+                    NSInteger automodeValue;
+                    float paddingValue;
+                    
+                    //init separators
+                    NSString *modeSeparator=@"mode=";
+                    NSString *automodeSeparator = @"automode=";
+                    NSString *zoomSeparator = @"zoom=";
+                    NSString *paddingSeparator = @"padding=";
+                    
+                    NSArray *tmpArrayOfParameters = [uriResource componentsSeparatedByString:@"&"];
+                    NSLog(@"tmpArrayOfParameters %@",tmpArrayOfParameters);
+                    
+                    for (NSString *substring in tmpArrayOfParameters) {
+                        NSRange modeSeparatorRange = [substring rangeOfString:modeSeparator];
+                        NSRange automodeSeparatorRange = [substring rangeOfString:automodeSeparator];
+//                        NSRange zoomSeparatorRange = [substring rangeOfString:zoomSeparator];
+                        NSRange paddingSeparatorRange = [substring rangeOfString:paddingSeparator];
+                        
+                        if (modeSeparatorRange.location!=NSNotFound) {
+                            NSLog(@"found modeSeparatorRange.location %d in substring %@",[substring rangeOfString:modeSeparator].location,substring);
+                            modeValue  = [[substring substringFromIndex:modeSeparatorRange.location + modeSeparator.length] integerValue];
+                            if (modeValue==1) {
+                                [dvc setMode:MFDocumentModeSingle];
+                            }else if (modeValue ==2) {
+                                [dvc setMode:MFDocumentModeDouble];
+                            }else {
+                                NSLog(@"not correct mode value %i",modeValue);
+                            }
+                        }
+                        if (automodeSeparatorRange.location!=NSNotFound) {
+                            NSLog(@"found automodeSeparator %d in substring %@",[substring rangeOfString:automodeSeparator].location, substring);
+                            automodeValue = [[substring substringFromIndex:automodeSeparatorRange.location + automodeSeparator.length] integerValue];
+                        }
+                        if (paddingSeparatorRange.location!=NSNotFound) {
+                            NSLog(@"found paddingSeparatorRange %d in substring %@",[substring rangeOfString:paddingSeparator].location,substring);
+                            paddingValue = [[substring substringFromIndex:paddingSeparatorRange.location + paddingSeparator.length] floatValue];
+                            [dvc setPadding:paddingValue];
+                        }
+                        
+                    }
+                    
+                }
                 
                 if ([uriType isEqualToString:@"fpke"]||[uriType isEqualToString:@"videomodal"]) {
                     
@@ -832,10 +882,11 @@
                     [self showWebView:documentPath local:YES];
                 }
                 
-                if ([uriType isEqualToString:@"http"]){
+                if ([uriType isEqualToString:@"http"] ){
                     
                     [self showWebView:uri local:NO];
                 }
+                
             }
         }
         
@@ -903,9 +954,14 @@
 		moviePlayViewController=[[MPMoviePlayerViewController alloc] initWithContentURL:url];
 		
 		if (moviePlayViewController) {
+            
+            
 			[self presentMoviePlayerViewControllerAnimated:moviePlayViewController];
 			[self setWantsFullScreenLayout:NO];
 			moviePlayViewController.moviePlayer.movieSourceType = MPMovieSourceTypeFile;
+            NSLog(@"adding observesr for mpplayer");
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(myMovieViewWillFullScreen:) name:MPMoviePlayerWillEnterFullscreenNotification object:moviePlayViewController ];
+            
 			[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(myMovieViewFinishedCallback:) name:MPMoviePlayerPlaybackDidFinishNotification object:[moviePlayViewController moviePlayer]];
 			[moviePlayViewController.moviePlayer play];
 		}
@@ -923,6 +979,16 @@
 	[moviePlayerController stop];
 	
     multimediaVisible = NO;
+}
+-(void)myMovieViewWillFullScreen:(NSNotification*)aNotification{
+    NSLog(@"myMovieViewWillFullScreen");
+    MPMoviePlayerViewController * moviePLayerViewController = [aNotification object];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:MPMoviePlayerWillEnterFullscreenNotification
+                                                  object:moviePLayerViewController];
+    [self presentViewController:moviePLayerViewController animated:YES completion:nil];
+
+    
 }
 
 -(void)showWebView:(NSString *)url local:(BOOL)isLocal{
@@ -948,6 +1014,11 @@
 	//	slider to reflect that. If you save the current page as a bookmark to it is a good idea to store the value
 	//	in this callback.
     
+    if (page==1) {
+        self.mode=MFDocumentModeSingle;
+    }else{
+        self.mode=MFDocumentModeDouble;
+    }
 	[self updatePageNumberLabel];
 }
 
@@ -1287,7 +1358,7 @@
 		[aBarButtonItem release];
 		*/
 		// Change lead.
-        
+        /*
         self.changeLeadButton = [UIButton buttonWithType:UIButtonTypeCustom];
         self.changeLeadButton.bounds = CGRectMake( 0, 0, 30 , 30 );    
         [self.changeLeadButton setImage:imgLeadRight forState:UIControlStateNormal];
@@ -1299,7 +1370,9 @@
 		[items addObject:aBarButtonItem];
         
 		[aBarButtonItem release];
-		
+		*/
+        
+        /*
 		// Change mode.
         
         self.changeModeButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -1311,7 +1384,7 @@
 		self.changeModeBarButtonItem = aBarButtonItem;
 		[items addObject:aBarButtonItem];
 		[aBarButtonItem release];
-		
+		*/
 		// Space.
 		
 		aBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
@@ -1393,7 +1466,7 @@
 		[aBarButtonItem release];
         
         // Search.
-        
+        /*
         aButton = [UIButton buttonWithType:UIButtonTypeCustom];
         aButton.bounds = CGRectMake( 0, 0, 34 , 30);
         
@@ -1406,7 +1479,7 @@
         
 		[items addObject:aBarButtonItem];
 		[aBarButtonItem release];
-        
+        */
 		
 	} else { // Iphone.
              
@@ -1428,11 +1501,12 @@
 		
 		
          // Space
-         
+         /*
          aBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+        
          [items addObject:aBarButtonItem];
          [aBarButtonItem release];
-         
+         */
 		/*
 		// Zoom lock.
         
@@ -1463,8 +1537,9 @@
 		[items addObject:aBarButtonItem];
 		[aBarButtonItem release];
 		*/
-		// Change lead.
         
+		// Change lead.
+        /*
         self.changeLeadButton = [UIButton buttonWithType:UIButtonTypeCustom];
         self.changeLeadButton.bounds = CGRectMake( 0, 0, 24 , 24 );    
         [self.changeLeadButton setImage:imgLeadRight forState:UIControlStateNormal];
@@ -1477,9 +1552,10 @@
 		[items addObject:aBarButtonItem];
         
 		[aBarButtonItem release];
-		
-		// Change mode.
+		*/
         
+		// Change mode.
+        /*
         self.changeModeButton = [UIButton buttonWithType:UIButtonTypeCustom];
         self.changeModeButton.bounds = CGRectMake( 0, 0, 24 , 24 );    
         [self.changeModeButton setImage:imgModeSingle forState:UIControlStateNormal];
@@ -1495,7 +1571,7 @@
         aBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
         [items addObject:aBarButtonItem];
         [aBarButtonItem release];
-        
+        */
 		/*
 		// Text.
         aButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -1552,7 +1628,7 @@
 		[aBarButtonItem release];
         
         // Search.
-        
+        /*
         aButton = [UIButton buttonWithType:UIButtonTypeCustom];
         aButton.bounds = CGRectMake( 0, 0, 24 , 24);
         
@@ -1565,6 +1641,7 @@
         
 		[items addObject:aBarButtonItem];
 		[aBarButtonItem release];
+         */
 	}
 	
 	aToolbar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, -44, self.view.bounds.size.width, toolbarHeight)];
@@ -1595,7 +1672,7 @@
 	//	like buttons.
 	
 	[super viewDidLoad];
-	
+
     [self loadResources];
 	[self prepareToolbar];
 }

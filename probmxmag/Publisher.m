@@ -19,15 +19,20 @@
 
 NSString *PublisherDidUpdate = @"PublisherDidUpdate";
 NSString *PublisherFailedUpdate = @"PublisherFailedUpdate";
-//NSString *PublisherMustUpdateIssuesList= @"PublisherMustUpdateIssuesList";
-//NSString *XMLNAFLocation = @"https://googledrive.com/host/0B6E2Hn-m7yvAN2NVZkRKejVXVDg/NAFexample.xml";
-NSString *XMLIssuesLocationIpad = @"http://gdurl.com/6OPR";
-NSString *XMLIssuesLocationIphone = @"https://googledrive.com/host/0B6E2Hn-m7yvAN2NVZkRKejVXVDg/issues_iphone.xml";
+NSString *PublisherMustUpdateIssueList =  @"PublisherMustUpdateIssueList";
+
+
+//NSString *XMLIssuesLocationIpad = @"https://googledrive.com/host/0B6E2Hn-m7yvANE95XzhNY2FVRm8/issues_ipad.xml";
+//NSString *XMLIssuesLocationIphone = @"https://googledrive.com/host/0B6E2Hn-m7yvANE95XzhNY2FVRm8/issues_iphone.xml";
+
+NSString *XMLIssuesLocationIpad = @"http://probmxmag.ru/probmxmagapp/issues_ipad.xml";
+NSString *XMLIssuesLocationIphone = @"http://probmxmag.ru/probmxmagapp/issues_iphone.xml";
+
 
 @implementation Publisher
 @synthesize ready;
 
-+(Publisher*)sharedInstance{
++(Publisher*)sharedInstance {
     static dispatch_once_t once;
     static Publisher *sharedInstance;
     dispatch_once(&once, ^{
@@ -88,13 +93,15 @@ NSString *XMLIssuesLocationIphone = @"https://googledrive.com/host/0B6E2Hn-m7yvA
         [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
         NSLog(@"networkStatus is NOT reachable");
         NSString* cachedIssuesName = [CacheDirectory stringByAppendingPathComponent:@"cachedIssues.plist"];
-        if ([[NSFileManager defaultManager] fileExistsAtPath:cachedIssuesName]) {
+        if ([[NSFileManager defaultManager] fileExistsAtPath:cachedIssuesName])
+        {
             NSLog(@"there is! cachedIssues.plist file");
             self.issues = [NSArray arrayWithContentsOfFile:cachedIssuesName];
             ready = YES;
             [self addIssuesInNewsstandLibrary];
             [[NSNotificationCenter defaultCenter] postNotificationName:PublisherDidUpdate object:self];
         }else{
+            //there is not cached plist of issues so post notification
             [[NSNotificationCenter defaultCenter] postNotificationName:PublisherFailedUpdate object:self];
         }
     //With internet connection implementation
@@ -122,7 +129,7 @@ NSString *XMLIssuesLocationIphone = @"https://googledrive.com/host/0B6E2Hn-m7yvA
                                NSString* cachedIssuesName = [CacheDirectory stringByAppendingPathComponent:@"cachedIssues.plist"];
                                [tmpIssuesArray writeToFile:cachedIssuesName atomically:YES];
                                self.issues = [[NSArray alloc] initWithArray:tmpIssuesArray];
-                               NSLog(@"self.issues count %d",[self.issues count] );
+                              
                                ready = YES;
                                [self addIssuesInNewsstandLibrary];
                                dispatch_async(dispatch_get_main_queue(), ^{
@@ -136,10 +143,19 @@ NSString *XMLIssuesLocationIphone = @"https://googledrive.com/host/0B6E2Hn-m7yvA
 
 -(void)getIssuesListSynchronous {
     NSLog(@"getIssuesListSynchronous");
+    NSArray *tmpIssues = [NSArray arrayWithContentsOfURL:[NSURL URLWithString:[self getIssuesLocation]]];
+    if(!tmpIssues) {
+    } else {
+        self.issues = [[NSArray alloc] initWithArray:tmpIssues];
+        ready = YES;
+        [self addIssuesInNewsstandLibrary];
+        
+    }
 }
 
 -(void)addIssuesInNewsstandLibrary
 {
+    NSLog(@"publisher addIssuesInNewsstandLibrary");
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
     
     [self.issues enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)

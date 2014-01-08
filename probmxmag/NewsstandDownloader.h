@@ -16,11 +16,11 @@
 
 @interface NewsstandDownloader : NSObject <NSURLConnectionDownloadDelegate>
 
-+(NewsstandDownloader*)sharedInstance;
+
 
 -(id)initWithPublisher:(Publisher*)thePublisher;
 
-//-(void)myhandleNotification:(NSNotification*)notification;
+-(void)handleNotification:(NSNotification*)notification;
 
 //-(void)fetchContent;
 

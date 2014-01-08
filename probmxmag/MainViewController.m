@@ -10,13 +10,14 @@
 #import "HeaderImageView.h"
 #import "IssueCell.h"
 #import "Reachability.h"
-
-#define PublisherErrorMessage @"Cannot get issues from publisher server. Try to refresh again."
-#define TITLE_NAVBAR @"Выпуски"
-
-//#import "MFDocumentViewController.h"
+#import "OverlayManager.h"
 #import "ReaderViewController.h"
-//#import "DocumentViewController.h" //?
+
+#define PublisherErrorMessage @"Нет доступа к серверу. Проверьте подключение к интернету."
+#define TITLE_NAVBAR @"Выпуски"
+#define CacheDirectory [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0]
+
+
 
 @class MFDocumentManager;
 
@@ -47,10 +48,11 @@
     //delegates and instances
     self.collectionView.dataSource = self;
     self.collectionView.delegate = self;
-    publisher = [Publisher sharedInstance];
-    newsstandDownloader = [NewsstandDownloader sharedInstance];
-    newsstandDownloader = [[NewsstandDownloader alloc] initWithPublisher:publisher];
-    newsstandDownloader.delegate = self;
+    self.publisher = [[AppDelegate instance] publisher];
+    
+    newsstandDownloader= [[AppDelegate instance] newsstandDownloader];
+    [newsstandDownloader setDelegate:self];
+    
     StoreManager *storeManager = [AppDelegate instance].storeManager;
     [storeManager setDelegate:self];
     
@@ -59,8 +61,10 @@
     }else{
         NSLog(@"not subscribed!");
     }
-    
-   // [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadIssues) name:PublisherMustUpdateIssueList object:self];
+   
+    //Have to set UICollectionViewFlow layout when loaded and changing orientation
+    [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:5];
     
     // set settings bar button
     UIBarButtonItem *settingsButton = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"settings.png"]
@@ -80,7 +84,14 @@
     [self loadIssues];
    
 }
-
+-(void)viewDidAppear:(BOOL)animated {
+   
+    
+}
+-(void)viewWillDisappear:(BOOL)animated {
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -88,43 +99,45 @@
 }
 
 -(void)loadIssues{
-    self.navigationItem.title = @"Loading...";
+    
+    self.navigationItem.title = @"Загрузка...";
     self.collectionView.alpha = 0.0;
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(publisherReady:) name:PublisherDidUpdate object:publisher];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(publisherFailed:) name:PublisherFailedUpdate object:publisher];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(publisherReady:) name:PublisherDidUpdate object:self.publisher];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(publisherFailed:) name:PublisherFailedUpdate object:self.publisher];
     
-    [publisher getIssuesList];
+    [self.publisher getIssuesList];
 }
+
 -(void)publisherReady:(NSNotification *)not {
     NSLog(@"publisherReady, so we will remove observer and show issues");
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:PublisherDidUpdate object:publisher];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:PublisherFailedUpdate object:publisher];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:PublisherDidUpdate object:self.publisher];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:PublisherFailedUpdate object:self.publisher];
     [self showIssues];
     [self loadHeader];
 }
+
 -(void)publisherFailed:(NSNotification *)not {
     NSLog(@"publisherFailed");
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:PublisherDidUpdate object:publisher];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:PublisherFailedUpdate object:publisher];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:PublisherDidUpdate object:self.publisher];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:PublisherFailedUpdate object:self.publisher];
     
     
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error!"
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Ошибка!"
                                                     message:PublisherErrorMessage
                                                    delegate:nil
                                           cancelButtonTitle:@"OK"
                                           otherButtonTitles:nil];
     [alert show];
-    
 }
 -(void)changeSettings{
     UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Настройки"
                                                              delegate:self
                                                     cancelButtonTitle:@"Отмена"
                                                destructiveButtonTitle:nil
-                                                    otherButtonTitles:@"Бесплатная подписка",@"Восстановить покупки", @"Удалить все выпуски",nil];
+                                                    otherButtonTitles:@"Бесплатная подписка",@"Восстановить подписку", @"Удалить все выпуски",nil];
     
     
     [actionSheet showInView:self.view];
@@ -137,9 +150,11 @@
     [self.collectionView reloadData];
     [self.headerImageView setNeedsDisplay];
 }
+
+
 -(void)loadHeader{
     
-    UIImage *headerImage=[publisher headerImageForIssueAtIndex:0 forRetina:isRetina];
+    UIImage *headerImage=[self.publisher headerImageForIssueAtIndex:0 forRetina:isRetina];
     if(headerImage){
         NSLog(@"set header from local image");
         [self.headerImageView.activityIndicator stopAnimating];
@@ -147,13 +162,10 @@
     }else{
         [self.headerImageView setImage:nil];
         [self.headerImageView.activityIndicator startAnimating];
-        NSLog(@"start downloading header image");
-#warning weakSelf in block
         __weak HeaderImageView *self_ = self.headerImageView;
-       [publisher setHeaderImageOfIssueAtIndex:0 forRetina:isRetina completionBlock:^(UIImage*img)
+       [self.publisher setHeaderImageOfIssueAtIndex:0 forRetina:isRetina completionBlock:^(UIImage*img)
         {
             dispatch_async(dispatch_get_main_queue(), ^{
-                NSLog(@"header downloaded and written");
                 [self_.activityIndicator stopAnimating];
                 [self_ setImage:img];
             });
@@ -162,14 +174,11 @@
     }
 
 }
--(void)viewWillDisappear:(BOOL)animated
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
+
 
 #pragma mark - UICollectionViewDataSource
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section{
-    return [publisher numberOfIssues ];
+    return [self.publisher numberOfIssues ];
 }
 -(NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView{
     return 1;
@@ -180,59 +189,105 @@
     //cell.layer.borderWidth = 1.0;
     
     NKLibrary *nkLib=[NKLibrary sharedLibrary];
-    NKIssue *issue=[nkLib issueWithName:[publisher nameOfIssueAtIndex:indexPath.row]];
+    NKIssue *issue=[nkLib issueWithName:[self.publisher nameOfIssueAtIndex:indexPath.row]];
     [cell updateCellInformationWithStatus:issue.status];
     
-    NSString *titleOfIssue=[publisher titleOfIssueAtIndex:indexPath.row];
+    NSString *titleOfIssue=[self.publisher titleOfIssueAtIndex:indexPath.row];
     cell.issueTitle.text = titleOfIssue;
-    NSString *description =[publisher issueDescriptionAtIndex:indexPath.row];
+    NSString *description =[self.publisher issueDescriptionAtIndex:indexPath.row];
     description = [description stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
     
     cell.textView.backgroundColor = [UIColor clearColor];
-    
     cell.textView.text = description;
+    
     [cell.downloadOrShowButton setTag:indexPath.row];
     [cell.downloadOrShowButton addTarget:self action:@selector(cellButtonPressed:)
                         forControlEvents:UIControlEventTouchUpInside];
-    UIImage *coverImage=[publisher coverImageForIssueAtIndex:indexPath.row retina:isRetina];
+    [cell.delButton setTag:indexPath.row];
+    
+    [cell.delButton addTarget:self action:@selector(delButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    //cover image
+    UIImage *coverImage=[self.publisher coverImageForIssueAtIndex:indexPath.row retina:isRetina];
     if(coverImage){
         [cell.imageView setImage:coverImage];
         [cell.activityIndicator stopAnimating];
+        [cell.imageView setTag:indexPath.row];
     }else{
         [cell.imageView setImage:nil];
         [cell.activityIndicator startAnimating];
-        [publisher setCoverOfIssueAtIndex:indexPath.row forRetina:isRetina completionBlock:^(UIImage*img){
+        [self.publisher setCoverOfIssueAtIndex:indexPath.row forRetina:isRetina completionBlock:^(UIImage*img){
             dispatch_async(dispatch_get_main_queue(), ^{
                 [cell.activityIndicator stopAnimating];
                 [cell.imageView setImage:img];
+                [cell.imageView setTag:indexPath.row];
             });
         }];
     }
-
+    // download when cover image tapped
+    //[cell.imageView setUserInteractionEnabled:YES];
+    //UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc]   initWithTarget:self action:@selector(singleTappingAtCoverImage)];
+    //[singleTap setNumberOfTapsRequired:1];
+    //[cell.imageView addGestureRecognizer:singleTap];
+    
+    if (issue.status == NKIssueContentStatusDownloading) {
+        
+        [cell.circularProgressView setAlpha:1.0];
+    }
     return cell;
 }
+
+/*
+-(void)singleTappingAtCoverImage{
+    NSLog(@"singleTappingAtCoverImage");
+}
+*/
+
+#pragma mark - 
+-(void)removeThumbnailFolderOfIssue:(NKIssue*)issue{
+    
+    NSString* path = [CacheDirectory stringByAppendingPathComponent:[issue.name stringByAppendingString:@".pdf"]];
+    NSError *error;
+    [[NSFileManager defaultManager] removeItemAtPath:path error:&error];
+    if (error) {
+        NSLog(@"error to remove: %@",error.localizedDescription);
+    }
+    
+}
+
 #pragma mark - UIButton cell delegate
 -(void)cellButtonPressed:(id)sender{
     int row = [sender tag];
+   
     [self showOrDownloadIssueAtIndex:row];
+}
+#pragma mark - del button delegate
+-(void)delButtonPressed:(id)sender {
+    int row = [sender tag];
+    [self removeIssueAtIndex:row];
 }
 
 #pragma mark - UICollectionViewDelegate
+/*
 -(void)collectionView:(UICollectionView *)cv didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
-    //IssueCell *cell=(IssueCell*)[cv dequeueReusableCellWithReuseIdentifier:@"IssueCell" forIndexPath:indexPath];
-    
-    [cv deselectItemAtIndexPath:indexPath animated:YES];
-    [self showOrDownloadIssueAtIndex:indexPath.row];
    
+}
+ */
+-(void)removeIssueAtIndex:(int)index{
+    NKLibrary *nkLib = [NKLibrary sharedLibrary];
+    NKIssue *nkIssue = [nkLib issueWithName:[self.publisher nameOfIssueAtIndex:index]];
+    [nkLib removeIssue:nkIssue];
+    IssueCell* tile = (IssueCell*)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
+    [tile updateCellInformationWithStatus:nkIssue.status];
+    [self removeThumbnailFolderOfIssue:nkIssue];
 }
 -(void)showOrDownloadIssueAtIndex:(int)index{
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
-    NKIssue *nkIssue = [nkLib issueWithName:[publisher nameOfIssueAtIndex:index]];
+    NKIssue *nkIssue = [nkLib issueWithName:[self.publisher nameOfIssueAtIndex:index]];
     if(nkIssue.status==NKIssueContentStatusAvailable) {
-        NSLog(@"open issue at index %d",index);
+        
         [self openIssueinFastPdfReader:nkIssue];
     } else if(nkIssue.status==NKIssueContentStatusNone) {
-        NSLog(@"download issue at index %d",index);
+        
         Reachability *reachability = [Reachability reachabilityForInternetConnection];
         [reachability startNotifier];
         NetworkStatus netStatus = [reachability currentReachabilityStatus];
@@ -242,28 +297,33 @@
             
         }else if (netStatus == ReachableViaWiFi)
         {
+            
             [self downloadIssueAtIndex:index];
         }else if (netStatus == ReachableViaWWAN){
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Внимание!" message:@"Для загрузки выпусков рекомендуется использовать WiFi соединение. Продолжить загрузку с помощью сотовой связи? Стоимость загрузки зависит от тарифов Вашего сотового оператора." delegate:self cancelButtonTitle:@"Продолжить" otherButtonTitles:@"Отменить", nil];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Внимание!" message:@"Для загрузки выпусков рекомендуется использовать WiFi соединение (стоимость зависит от тарифов сот. оператора." delegate:self cancelButtonTitle:@"Продолжить" otherButtonTitles:@"Отменить", nil];
+            alert.tag = index;
             [alert show];
         }
   
     }
-    else if(nkIssue.status ==NKIssueContentStatusDownloading){
+    else if(nkIssue.status == NKIssueContentStatusDownloading){
         NSLog(@"Issue already downloading");
-        //TODO pause downloading
+        //TODO cancel downloading
         [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
         [nkLib removeIssue:nkIssue];
-        [publisher addIssuesInNewsstandLibrary];
+        [self.publisher addIssuesInNewsstandLibrary];
         IssueCell* tile = (IssueCell*)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
         [tile updateCellInformationWithStatus:NKIssueContentStatusNone];
-        NSLog(@"nklib %@",nkLib.issues);
+        
     }
 }
 -(void)downloadIssueAtIndex:(NSInteger)index {
 
     [newsstandDownloader downloadIssueAtIndex:index];
     IssueCell* tile = (IssueCell*)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
+    
+    [tile.circularProgressView setAlpha:1.0];
+    [tile.circularProgressView startSpinProgressBackgroundLayer];
     [tile updateCellInformationWithStatus:NKIssueContentStatusDownloading];
 }
 #pragma  mark - OpenIssue in FastPdfKitReader
@@ -276,37 +336,65 @@
 
     NSString* resourceFolder = [issue.contentURL path];
     NSLog(@"resourceFolder %@",resourceFolder); 
-    //NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    //NSString *thumbnailsPath = [[documentURL path] stringByAppendingPathComponent:[NSString stringWithFormat:@"%@",documentName]];
-    
-    MFDocumentManager *documentManager = [[MFDocumentManager alloc]initWithFileUrl:documentURL];
-    
-    documentManager.resourceFolder = resourceFolder;
-    
-    ReaderViewController *pdfViewController = [[ReaderViewController alloc]initWithDocumentManager:documentManager];
-    pdfViewController.documentId = documentName;
-    
-    [pdfViewController setDocumentDelegate:pdfViewController];
-    pdfViewController.fpkAnnotationsEnabled = YES;
-    //documentManager.resourceFolder = thumbnailsPath;
-    //pdfViewController.documentId = documentName;
 
+    MFDocumentManager *documentManager = [[MFDocumentManager alloc]
+                                          initWithFileUrl:documentURL];
+    ReaderViewController *pdfViewController = [[ReaderViewController alloc]
+                                               initWithDocumentManager:documentManager];
+
+    [pdfViewController setThumbnailSliderEnabled:YES];
+    documentManager.resourceFolder = resourceFolder;
+    pdfViewController.documentId = documentName;
+
+    /**
+     Instantiating the FPKOverlayManager (you can find in the the FPKShared framework) to manage extensions.
+     
+     You can use initWithExtensions or set them manually in the init method.
+     
+     NSArray *extensions = [[NSArray alloc] initWithObjects:@"FPKYouTube", nil];
+     OverlayManager *_overlayManager = [[[OverlayManager alloc] initWithExtensions:extensions] autorelease];
+     */
+    
+    OverlayManager *_overlayManager = [[OverlayManager alloc] init] ;
+    
+    /** Add the FPKOverlayManager as OverlayViewDataSource to the ReaderViewController */
+    [pdfViewController addOverlayViewDataSource:_overlayManager];
+    
+    /** Register as DocumentDelegate to receive tap */
+    [pdfViewController addDocumentDelegate:_overlayManager];
+    
+    /** Set the DocumentViewController to obtain access the the conversion methods */
+    [_overlayManager setDocumentViewController:(MFDocumentViewController <FPKOverlayManagerDelegate> *)pdfViewController];
+    
+    [pdfViewController setDismissBlock:^{
+        [self dismissViewControllerAnimated:YES completion:Nil];
+        
+    }];
     [self presentViewController:pdfViewController animated:YES completion:nil];
+   
     
 }
-#pragma mark - 
--(BOOL)shouldAutorotate
+#pragma mark - Orientations
+-(NSUInteger)supportedInterfaceOrientations
 {
-    NSLog(@"shouldAutorotate");
-    return NO;
-}
+    NSLog(@"supportedInterfaceOrientations");
+    if (isIpad) {
+        NSLog(@"iPad UIInterfaceOrientationMaskAll");
+        return UIInterfaceOrientationMaskAll;
+    }else{
+        NSLog(@"iphone UIInterfaceOrientationMaskPortrait");
+        return UIInterfaceOrientationMaskPortrait;
+    }
+}/*
 -(void)viewWillLayoutSubviews{
     NSLog(@"viewWillLayoutSubviews");
     [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
 }
+*/
 -(void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration{
     NSLog(@"willRotate");
-    if (isIpad) {
+    if (isIpad)
+    {
         if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft || toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
             NSLog(@"willRotate to landscape");
             [self.collectionViewFlowlayout setSectionInset:UIEdgeInsetsMake(10, 80, 10, 80)];
@@ -315,53 +403,6 @@
             [self.collectionViewFlowlayout setSectionInset:UIEdgeInsetsMake(10, 10, 10, 10)];
         }
     }
-    /*
-    if (isIpad )
-    {
-        if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft || toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
-            NSLog(@"willRotate to landscape");
-            
-            if (isIos7)
-            {
-                //header image size is 1024 x 282
-                //navBar+statusBar = 64
-                self.view.frame =CGRectMake(0, 0, 1024, 768);
-                self.headerImageView.frame = CGRectMake(0, 64, 1024, 255);
-                self.collectionView.frame = CGRectMake(0, 255+64, 1024, 768-64-255);
-            }else{
-                //ios 6 landscape
-                self.view.frame =CGRectMake(0, 44+20, 1024, 768-44-20);
-                self.headerImageView.frame = CGRectMake(0, 0, 1024, 255);
-                self.collectionView.frame = CGRectMake(0, 255, 1024, 768-44-20-255);
-            }
-            //TODO header center point
-            self.headerImageView.activityIndicator.center = self.headerImageView.center;
-            [self.collectionViewFlowlayout setSectionInset:UIEdgeInsetsMake(10, 80, 10, 80)];
-            [self.collectionViewFlowlayout setMinimumLineSpacing:18.0];
-        }else{
-            //portrait orientation
-            NSLog(@"willRotate to portrait mode");
-            if (isIos7) {
-                self.view.frame = CGRectMake(0, 0, 768, 1024);
-                self.headerImageView.frame = CGRectMake(-128, 64, 1024, 255);
-                self.collectionView.frame =CGRectMake(0, 255+64, 768, 1024-64-255);
-            }else{
-                //ios 6 portrait
-                //status bar 20 px
-                self.view.frame = CGRectMake(0, 44+20, 768, 1024-44-20);
-                self.headerImageView.frame = CGRectMake(-128.0, 0.0, 1024.0, 255.0);
-                self.collectionView.frame = CGRectMake(0, 255, 768, 1024-44-20-255);
-            }
-            self.headerImageView.activityIndicator.center = self.headerImageView.center;
-            [self.collectionViewFlowlayout setSectionInset:UIEdgeInsetsMake(10, 10, 10, 10)];
-            [self.collectionViewFlowlayout setMinimumLineSpacing:18.0];
-         
-        }
-    }else{
-        //to do iphone implementation
-        
-    }
-     */
     
 }
 
@@ -372,10 +413,11 @@
     NKAssetDownload *dnl = connection.newsstandAssetDownload;
     int tileIndex = [[dnl.userInfo objectForKey:@"Index"] intValue];
     IssueCell* cell = (IssueCell*)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:tileIndex inSection:0]];
-    cell.progressView.progress=1.f*totalBytesWritten/expectedTotalBytes;
-    // NSLog(@"Downloading progress: %f",1.f*totalBytesWritten/expectedTotalBytes);
+    
+    cell.circularProgressView.progress = 1.f*totalBytesWritten/expectedTotalBytes;
     [cell.imageView setAlpha:0.5f+0.5f*totalBytesWritten/expectedTotalBytes];
     [cell updateCellInformationWithStatus:NKIssueContentStatusDownloading];
+    
 }
 
 
@@ -405,24 +447,27 @@
         NSLog(@"App is backgrounded. Download finished");
         //TODO
     }
-    
+   
 }
 #pragma mark - IssueCellDelegate
 -(void)trashContent {
-    NSLog(@"trashContent method implementation");
+    NSLog(@"remove all issues");
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
-    NSLog(@"nkLib.issues= %@",nkLib.issues);
+    for (NKIssue *issue in nkLib.issues) {
+        [self removeThumbnailFolderOfIssue:issue];
+    }
     [nkLib.issues enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         [nkLib removeIssue:(NKIssue *)obj];
     }];
-    [publisher addIssuesInNewsstandLibrary];
+    [self.publisher addIssuesInNewsstandLibrary];
     [self.collectionView reloadData];
 }
 
 #pragma mark - StoreManagerDelegate
 -(void)subscriptionCompletedWith:(BOOL)success{
     if (success) {
-        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Спасибо" message:@"Подписка оформлена!" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Спасибо" message:@"Подписка оформлена!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        
         [alert show];
     }
 }
@@ -433,12 +478,26 @@
     
     if (buttonIndex==0 || buttonIndex==1) {
         //subscribing
+        
         StoreManager *storeManager=[AppDelegate instance].storeManager;
-        [storeManager subscribeToMagazine];
+        if ([storeManager isSubscribed]) {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Внимание" message:@"Бесплатная подписка уже была оформленна." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+            [alert show];
+            
+        }else{
+            [storeManager subscribeToMagazine];}
     }
     
     if (buttonIndex==2) {
         [self trashContent];
+    }
+}
+#pragma mark - UIAlertViewDelegate
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if (alertView.tag >= 0) {
+        if (buttonIndex ==0) {
+            [self downloadIssueAtIndex:alertView.tag];
+        }
     }
 }
 @end

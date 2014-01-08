@@ -11,7 +11,7 @@
 
 extern  NSString *PublisherDidUpdate;
 extern  NSString *PublisherFailedUpdate;
-//extern  NSString *PublisherMustUpdateIssuesList;
+extern  NSString *PublisherMustUpdateIssueList;
 //extern  NSString *XMLNAFLocation;
 
 @interface Publisher : NSObject

@@ -84,7 +84,8 @@ typedef NSUInteger MFDocumentDirection;
 /**
  Supported orientation.
  */
-enum FPKSupportedOrientation {
+enum FPKSupportedOrientation
+{
     FPKSupportedOrientationNone = 0,
     FPKSupportedOrientationPortrait = 1,
     FPKSupportedOrientationPortraitUpsideDown = 2,
@@ -94,7 +95,7 @@ enum FPKSupportedOrientation {
 typedef NSUInteger FPKSupportedOrientation;
 
 
-static BOOL isOrientationSupported(NSUInteger orientation, NSUInteger orientations) {
+static BOOL isOrientationSupported (NSUInteger orientation, NSUInteger orientations) {
     
     NSUInteger zeroOrNotZero;
     zeroOrNotZero = (orientation & orientations);
@@ -106,7 +107,7 @@ static BOOL isOrientationSupported(NSUInteger orientation, NSUInteger orientatio
     return NO;
 }
 
-#define IS_DEVICE_PAD ([UIDevice instancesRespondToSelector:@selector(userInterfaceIdiom)] && [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
+//#define IS_DEVICE_PAD ([UIDevice instancesRespondToSelector:@selector(userInterfaceIdiom)] && [[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad)
 
 
 static inline int normalize_angle(int degs) {
