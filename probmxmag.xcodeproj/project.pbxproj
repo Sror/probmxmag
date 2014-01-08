@@ -43,6 +43,8 @@
 		6C3BDE4A183B7C6C00B707F3 /* FPKMap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C3BDE39183B7C6B00B707F3 /* FPKMap.framework */; };
 		6C3BDE4B183B7C6D00B707F3 /* FPKMessage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C3BDE3B183B7C6B00B707F3 /* FPKMessage.framework */; };
 		6C3BDE4C183B7C6D00B707F3 /* fpkmessage-info.png in Resources */ = {isa = PBXBuildFile; fileRef = 6C3BDE3D183B7C6B00B707F3 /* fpkmessage-info.png */; };
+		6C459C83187DB1A700890A6A /* Appirater.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C459C81187DB1A700890A6A /* Appirater.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		6C459C87187DB4A700890A6A /* AppiraterLocalizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6C459C85187DB4A700890A6A /* AppiraterLocalizable.strings */; };
 		6C551DFF18335E9200CD8187 /* trash@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6C551DFD18335E9200CD8187 /* trash@2x.png */; };
 		6C551E0018335E9200CD8187 /* trash.png in Resources */ = {isa = PBXBuildFile; fileRef = 6C551DFE18335E9200CD8187 /* trash.png */; };
 		6C551E03183362D700CD8187 /* trash-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 6C551E01183362D700CD8187 /* trash-2.png */; };
@@ -90,7 +92,7 @@
 		6CDB07F6181E46D60048BF65 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6CDB07D5181E46D50048BF65 /* UIKit.framework */; };
 		6CDB07FE181E46D60048BF65 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6CDB07FC181E46D60048BF65 /* InfoPlist.strings */; };
 		6CDB0800181E46D60048BF65 /* probmxmagTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CDB07FF181E46D60048BF65 /* probmxmagTests.m */; };
-		6CDB080A181E47200048BF65 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6CDB0809181E47200048BF65 /* StoreKit.framework */; };
+		6CDB080A181E47200048BF65 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6CDB0809181E47200048BF65 /* StoreKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		6CDB0810181E4BC20048BF65 /* HeaderImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CDB080F181E4BC20048BF65 /* HeaderImageView.m */; };
 		6CDB0816181E4FA80048BF65 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CDB0815181E4FA80048BF65 /* MainViewController.m */; };
 		6CDB081A181E519D0048BF65 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 6CDB0818181E519D0048BF65 /* background.png */; };
@@ -196,6 +198,10 @@
 		6C3BDE39183B7C6B00B707F3 /* FPKMap.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FPKMap.framework; sourceTree = "<group>"; };
 		6C3BDE3B183B7C6B00B707F3 /* FPKMessage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FPKMessage.framework; sourceTree = "<group>"; };
 		6C3BDE3D183B7C6B00B707F3 /* fpkmessage-info.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fpkmessage-info.png"; sourceTree = "<group>"; };
+		6C459C80187DB1A700890A6A /* Appirater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Appirater.h; sourceTree = "<group>"; };
+		6C459C81187DB1A700890A6A /* Appirater.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Appirater.m; sourceTree = "<group>"; };
+		6C459C82187DB1A700890A6A /* AppiraterDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppiraterDelegate.h; sourceTree = "<group>"; };
+		6C459C86187DB4A700890A6A /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = AppiraterLocalizable.strings; sourceTree = "<group>"; };
 		6C551DFD18335E9200CD8187 /* trash@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "trash@2x.png"; sourceTree = "<group>"; };
 		6C551DFE18335E9200CD8187 /* trash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = trash.png; sourceTree = "<group>"; };
 		6C551E01183362D700CD8187 /* trash-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "trash-2.png"; sourceTree = "<group>"; };
@@ -370,6 +376,7 @@
 		6C3B82A9182BB8E2007384B3 /* ThirdParty */ = {
 			isa = PBXGroup;
 			children = (
+				6C459C7F187DB19300890A6A /* Appirater */,
 				6C5F83BD183E2A10008C38A0 /* FFCircularProgressView */,
 				6C834ADE182D289200AB2CF7 /* ExtendNSLog.h */,
 				6C834ADF182D289200AB2CF7 /* ExtendNSLog.m */,
@@ -554,6 +561,25 @@
 				6C3BDE3D183B7C6B00B707F3 /* fpkmessage-info.png */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		6C459C7F187DB19300890A6A /* Appirater */ = {
+			isa = PBXGroup;
+			children = (
+				6C459C80187DB1A700890A6A /* Appirater.h */,
+				6C459C81187DB1A700890A6A /* Appirater.m */,
+				6C459C82187DB1A700890A6A /* AppiraterDelegate.h */,
+				6C459C84187DB4A700890A6A /* ru.lproj */,
+			);
+			name = Appirater;
+			sourceTree = "<group>";
+		};
+		6C459C84187DB4A700890A6A /* ru.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				6C459C85187DB4A700890A6A /* AppiraterLocalizable.strings */,
+			);
+			path = ru.lproj;
 			sourceTree = "<group>";
 		};
 		6C529540183B3D98003159A6 /* Extensions */ = {
@@ -909,6 +935,7 @@
 			files = (
 				6C3B8315182BB92C007384B3 /* BookmarkView.xib in Resources */,
 				6CDB07E8181E46D50048BF65 /* Main_iPad.storyboard in Resources */,
+				6C459C87187DB4A700890A6A /* AppiraterLocalizable.strings in Resources */,
 				6CB6B7E41828DD8A00CB9BC2 /* Images.xcassets in Resources */,
 				6C3B832A182BB92C007384B3 /* OutlineView.xib in Resources */,
 				6C8A9C1E182CCE15002800C5 /* FPKReaderBundle.bundle in Resources */,
@@ -991,6 +1018,7 @@
 				6CDB0852181EDDEE0048BF65 /* Publisher.m in Sources */,
 				6CDB0810181E4BC20048BF65 /* HeaderImageView.m in Sources */,
 				6C3B82BD182BB8E3007384B3 /* zip.c in Sources */,
+				6C459C83187DB1A700890A6A /* Appirater.m in Sources */,
 				6C3B832E182BB92C007384B3 /* ReaderViewController.m in Sources */,
 				6CBC8C1D184A2A0600234EA2 /* FPKGalleryTap.m in Sources */,
 				6C3B8327182BB92C007384B3 /* MFAudioPlayerViewImpl.m in Sources */,
@@ -1022,6 +1050,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		6C459C85187DB4A700890A6A /* AppiraterLocalizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6C459C86187DB4A700890A6A /* ru */,
+			);
+			name = AppiraterLocalizable.strings;
+			sourceTree = "<group>";
+		};
 		6CDB07DA181E46D50048BF65 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (

@@ -11,7 +11,7 @@
 #import <NewsstandKit/NewsstandKit.h>
 #import "Publisher.h"
 #import "NewsstandDownloader.h"
-
+#import "Appirater.h"
 
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate>{

@@ -132,13 +132,28 @@
                                           otherButtonTitles:nil];
     [alert show];
 }
+
 -(void)changeSettings{
+    //TODO
+    // if allready rated then dont show rate app
+    NSArray *buttons=nil;
+    if ([self userHasRatedCurrentVersion]) {
+        NSLog(@"the user already rated the app!");
+        buttons = @[@"Бесплатная подписка",@"Восстановить подписку", @"Удалить все выпуски"];
+    }else{
+        NSLog(@"user don't rate app");
+        buttons = @[@"Оценить probmxmag", @"Бесплатная подписка",@"Восстановить подписку", @"Удалить все выпуски"];
+    }
     UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@"Настройки"
                                                              delegate:self
-                                                    cancelButtonTitle:@"Отмена"
+                                                    cancelButtonTitle:nil
                                                destructiveButtonTitle:nil
-                                                    otherButtonTitles:@"Бесплатная подписка",@"Восстановить подписку", @"Удалить все выпуски",nil];
-    
+                                                    otherButtonTitles:nil];
+    for (NSString *buttonTitle in buttons) {
+        [actionSheet addButtonWithTitle:buttonTitle];
+    }
+    [actionSheet addButtonWithTitle:@"Отмена"];
+    actionSheet.cancelButtonIndex = actionSheet.numberOfButtons-1;
     
     [actionSheet showInView:self.view];
 }
@@ -332,10 +347,7 @@
     [[NKLibrary sharedLibrary] setCurrentlyReadingIssue:issue];
     NSString *documentName=[issue.name stringByAppendingString:@".pdf"];
     NSURL *documentURL = [NSURL fileURLWithPath:[[issue.contentURL path] stringByAppendingPathComponent:documentName]];
-    NSLog(@"document URL = %@",documentURL);
-
     NSString* resourceFolder = [issue.contentURL path];
-    NSLog(@"resourceFolder %@",resourceFolder); 
 
     MFDocumentManager *documentManager = [[MFDocumentManager alloc]
                                           initWithFileUrl:documentURL];
@@ -346,15 +358,6 @@
     documentManager.resourceFolder = resourceFolder;
     pdfViewController.documentId = documentName;
 
-    /**
-     Instantiating the FPKOverlayManager (you can find in the the FPKShared framework) to manage extensions.
-     
-     You can use initWithExtensions or set them manually in the init method.
-     
-     NSArray *extensions = [[NSArray alloc] initWithObjects:@"FPKYouTube", nil];
-     OverlayManager *_overlayManager = [[[OverlayManager alloc] initWithExtensions:extensions] autorelease];
-     */
-    
     OverlayManager *_overlayManager = [[OverlayManager alloc] init] ;
     
     /** Add the FPKOverlayManager as OverlayViewDataSource to the ReaderViewController */
@@ -392,14 +395,13 @@
 }
 */
 -(void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration{
-    NSLog(@"willRotate");
     if (isIpad)
     {
         if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft || toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
-            NSLog(@"willRotate to landscape");
+
             [self.collectionViewFlowlayout setSectionInset:UIEdgeInsetsMake(10, 80, 10, 80)];
         }else {
-            NSLog(@"will rotate to portrait orientation");
+
             [self.collectionViewFlowlayout setSectionInset:UIEdgeInsetsMake(10, 10, 10, 10)];
         }
     }
@@ -473,24 +475,67 @@
 }
 
 #pragma mark- UIActionSheetDelegate
--(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex{
-    NSLog(@"actionSheet clickedButtonAtIndex %d",buttonIndex);
-    
-    if (buttonIndex==0 || buttonIndex==1) {
-        //subscribing
-        
-        StoreManager *storeManager=[AppDelegate instance].storeManager;
-        if ([storeManager isSubscribed]) {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Внимание" message:@"Бесплатная подписка уже была оформленна." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
-            [alert show];
-            
-        }else{
-            [storeManager subscribeToMagazine];}
+-(void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if ([self userHasRatedCurrentVersion])
+    {
+        switch (buttonIndex) {
+            case 0:
+            case 1:
+            {
+                //subscribe to magazine
+                StoreManager *storeManager=[AppDelegate instance].storeManager;
+                if ([storeManager isSubscribed]) {
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Внимание" message:@"Бесплатная подписка уже была оформленна." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                    [alert show];
+                    
+                }else{
+                    [storeManager subscribeToMagazine];
+                }
+            }
+                break;
+            case 2:
+            {
+              [self trashContent];
+            }
+                break;
+            default:
+                break;
+        }
+    }else{
+        switch (buttonIndex) {
+            case 0:
+            {
+                //rate app
+                [Appirater rateApp];
+            }
+                break;
+            case 1:
+            case 2:
+            {
+                //subscribe to magazine
+                StoreManager *storeManager=[AppDelegate instance].storeManager;
+                if ([storeManager isSubscribed]) {
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Внимание" message:@"Бесплатная подписка уже была оформленна." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+                    [alert show];
+                    
+                }else{
+                    [storeManager subscribeToMagazine];
+                }
+            }
+                break;
+            case 3:
+            {
+                //remove all content
+                [self trashContent];
+            }
+                break;
+            default:
+                break;
+        }
     }
+   
     
-    if (buttonIndex==2) {
-        [self trashContent];
-    }
 }
 #pragma mark - UIAlertViewDelegate
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
@@ -500,4 +545,9 @@
         }
     }
 }
+
+- (BOOL)userHasRatedCurrentVersion {
+    return [[NSUserDefaults standardUserDefaults] boolForKey:kAppiraterRatedCurrentVersion];
+}
+
 @end

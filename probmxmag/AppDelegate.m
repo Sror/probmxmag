@@ -11,6 +11,7 @@
 #import <Parse/Parse.h>
 
 
+
 @implementation AppDelegate
 
 
@@ -27,6 +28,15 @@
     self.publisher = [[Publisher alloc] init];
     //self.newsstandDownloader = [NewsstandDownloader sharedInstance];
     self.newsstandDownloader = [[NewsstandDownloader alloc] initWithPublisher:self.publisher];
+    
+    //rate app reminder
+    [Appirater setAppId:@"709195924"];
+    
+    [Appirater setDaysUntilPrompt:1];
+    [Appirater setUsesUntilPrompt:10];
+    [Appirater setSignificantEventsUntilPrompt:-1];
+    [Appirater setTimeBeforeReminding:2];
+    //[Appirater setDebug:YES];
     
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
     for(NKAssetDownload *asset in [nkLib downloadingAssets]) {
@@ -95,7 +105,17 @@
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"NKDontThrottleNewsstandContentNotifications"];
     [[NSUserDefaults standardUserDefaults] synchronize];
   */
+    
+    [NSTimer scheduledTimerWithTimeInterval:10.0f target:self
+                                                    selector:@selector(readyForAppinator)
+                                                    userInfo:nil
+                                                     repeats:NO ];
+    
     return YES;
+}
+-(void)readyForAppinator{
+    NSLog(@"readyForAppinator");
+    [Appirater appLaunched:YES];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
@@ -115,6 +135,7 @@
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
     NSLog(@"app will enter foreground");
+    [Appirater appEnteredForeground:YES];
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
 }
 
