@@ -25,13 +25,13 @@
     BOOL isIpad;
     BOOL isIos7;
     BOOL isRetina;
+    
 }
 
 @end
 
 @implementation MainViewController
 @synthesize headerImageView;
-
 
 - (void)viewDidLoad
 {
@@ -74,20 +74,14 @@
     
     //set refresh button
     UIBarButtonItem *refreshButton=[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(loadIssues)];
-    
     [self.navigationItem setRightBarButtonItem:refreshButton];
     //set background
 	[self.view setBackgroundColor:[UIColor colorWithPatternImage:[UIImage imageNamed:@"background"]]];
     [self.collectionView setBackgroundColor:[UIColor clearColor]];
-    //set header view
-   
     [self loadIssues];
    
 }
--(void)viewDidAppear:(BOOL)animated {
-   
-    
-}
+
 -(void)viewWillDisappear:(BOOL)animated {
     
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -138,7 +132,7 @@
     // if allready rated then dont show rate app
     NSArray *buttons=nil;
     if ([self userHasRatedCurrentVersion]) {
-        NSLog(@"the user already rated the app!");
+        
         buttons = @[@"Бесплатная подписка",@"Восстановить подписку", @"Удалить все выпуски"];
     }else{
         NSLog(@"user don't rate app");
@@ -185,9 +179,7 @@
                 [self_ setImage:img];
             });
         }];
-        
     }
-
 }
 
 
@@ -238,55 +230,34 @@
             });
         }];
     }
-    // download when cover image tapped
-    //[cell.imageView setUserInteractionEnabled:YES];
-    //UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc]   initWithTarget:self action:@selector(singleTappingAtCoverImage)];
-    //[singleTap setNumberOfTapsRequired:1];
-    //[cell.imageView addGestureRecognizer:singleTap];
-    
     if (issue.status == NKIssueContentStatusDownloading) {
-        
         [cell.circularProgressView setAlpha:1.0];
     }
     return cell;
 }
 
-/*
--(void)singleTappingAtCoverImage{
-    NSLog(@"singleTappingAtCoverImage");
-}
-*/
-
-#pragma mark - 
+#pragma mark - remove thumbnail
 -(void)removeThumbnailFolderOfIssue:(NKIssue*)issue{
-    
     NSString* path = [CacheDirectory stringByAppendingPathComponent:[issue.name stringByAppendingString:@".pdf"]];
     NSError *error;
     [[NSFileManager defaultManager] removeItemAtPath:path error:&error];
     if (error) {
         NSLog(@"error to remove: %@",error.localizedDescription);
     }
-    
 }
 
 #pragma mark - UIButton cell delegate
 -(void)cellButtonPressed:(id)sender{
     int row = [sender tag];
-   
     [self showOrDownloadIssueAtIndex:row];
 }
+
 #pragma mark - del button delegate
 -(void)delButtonPressed:(id)sender {
     int row = [sender tag];
     [self removeIssueAtIndex:row];
 }
 
-#pragma mark - UICollectionViewDelegate
-/*
--(void)collectionView:(UICollectionView *)cv didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
-   
-}
- */
 -(void)removeIssueAtIndex:(int)index{
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
     NKIssue *nkIssue = [nkLib issueWithName:[self.publisher nameOfIssueAtIndex:index]];
@@ -299,20 +270,16 @@
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
     NKIssue *nkIssue = [nkLib issueWithName:[self.publisher nameOfIssueAtIndex:index]];
     if(nkIssue.status==NKIssueContentStatusAvailable) {
-        
         [self openIssueinFastPdfReader:nkIssue];
     } else if(nkIssue.status==NKIssueContentStatusNone) {
-        
         Reachability *reachability = [Reachability reachabilityForInternetConnection];
         [reachability startNotifier];
         NetworkStatus netStatus = [reachability currentReachabilityStatus];
         if (netStatus == NotReachable) {
             UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Ошибка" message:@"Проверьте интернет подключение" delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
             [alert show];
-            
         }else if (netStatus == ReachableViaWiFi)
         {
-            
             [self downloadIssueAtIndex:index];
         }else if (netStatus == ReachableViaWWAN){
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Внимание!" message:@"Для загрузки выпусков рекомендуется использовать WiFi соединение (стоимость зависит от тарифов сот. оператора." delegate:self cancelButtonTitle:@"Продолжить" otherButtonTitles:@"Отменить", nil];
@@ -329,18 +296,17 @@
         [self.publisher addIssuesInNewsstandLibrary];
         IssueCell* tile = (IssueCell*)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
         [tile updateCellInformationWithStatus:NKIssueContentStatusNone];
-        
     }
 }
--(void)downloadIssueAtIndex:(NSInteger)index {
-
+-(void)downloadIssueAtIndex:(NSInteger)index
+{
     [newsstandDownloader downloadIssueAtIndex:index];
     IssueCell* tile = (IssueCell*)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForRow:index inSection:0]];
-    
     [tile.circularProgressView setAlpha:1.0];
     [tile.circularProgressView startSpinProgressBackgroundLayer];
     [tile updateCellInformationWithStatus:NKIssueContentStatusDownloading];
 }
+
 #pragma  mark - OpenIssue in FastPdfKitReader
 -(void)openIssueinFastPdfReader:(NKIssue*)issue
 {
@@ -348,68 +314,45 @@
     NSString *documentName=[issue.name stringByAppendingString:@".pdf"];
     NSURL *documentURL = [NSURL fileURLWithPath:[[issue.contentURL path] stringByAppendingPathComponent:documentName]];
     NSString* resourceFolder = [issue.contentURL path];
-
     MFDocumentManager *documentManager = [[MFDocumentManager alloc]
                                           initWithFileUrl:documentURL];
     ReaderViewController *pdfViewController = [[ReaderViewController alloc]
                                                initWithDocumentManager:documentManager];
-
     [pdfViewController setThumbnailSliderEnabled:YES];
     documentManager.resourceFolder = resourceFolder;
     pdfViewController.documentId = documentName;
-
     OverlayManager *_overlayManager = [[OverlayManager alloc] init] ;
-    
     /** Add the FPKOverlayManager as OverlayViewDataSource to the ReaderViewController */
     [pdfViewController addOverlayViewDataSource:_overlayManager];
-    
     /** Register as DocumentDelegate to receive tap */
     [pdfViewController addDocumentDelegate:_overlayManager];
-    
     /** Set the DocumentViewController to obtain access the the conversion methods */
     [_overlayManager setDocumentViewController:(MFDocumentViewController <FPKOverlayManagerDelegate> *)pdfViewController];
-    
     [pdfViewController setDismissBlock:^{
+        [Appirater userDidSignificantEvent:YES];
+        NSLog(@"user did close reader so we will add user did sugnificant event");
+        [self willRotateToInterfaceOrientation:[[UIApplication sharedApplication]statusBarOrientation] duration:0];
         [self dismissViewControllerAnimated:YES completion:Nil];
-        
     }];
     [self presentViewController:pdfViewController animated:YES completion:nil];
-   
-    
 }
+
 #pragma mark - Orientations
--(NSUInteger)supportedInterfaceOrientations
-{
-    NSLog(@"supportedInterfaceOrientations");
-    if (isIpad) {
-        NSLog(@"iPad UIInterfaceOrientationMaskAll");
-        return UIInterfaceOrientationMaskAll;
-    }else{
-        NSLog(@"iphone UIInterfaceOrientationMaskPortrait");
-        return UIInterfaceOrientationMaskPortrait;
-    }
-}/*
--(void)viewWillLayoutSubviews{
-    NSLog(@"viewWillLayoutSubviews");
-    [self willRotateToInterfaceOrientation:self.interfaceOrientation duration:0];
-}
-*/
 -(void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration{
     if (isIpad)
     {
+        NSLog(@"willRotateToInterfaceOrientation");
         if (toInterfaceOrientation == UIInterfaceOrientationLandscapeLeft || toInterfaceOrientation == UIInterfaceOrientationLandscapeRight) {
-
             [self.collectionViewFlowlayout setSectionInset:UIEdgeInsetsMake(10, 80, 10, 80)];
         }else {
-
             [self.collectionViewFlowlayout setSectionInset:UIEdgeInsetsMake(10, 10, 10, 10)];
         }
+    }else{
+        NSLog(@"willRotate iphone");
     }
-    
 }
 
 #pragma mark - NewsstandDownloaderDelegate methods
-
 -(void)updateProgressOfConnection:(NSURLConnection *)connection withTotalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes
 {
     NKAssetDownload *dnl = connection.newsstandAssetDownload;
@@ -419,18 +362,15 @@
     cell.circularProgressView.progress = 1.f*totalBytesWritten/expectedTotalBytes;
     [cell.imageView setAlpha:0.5f+0.5f*totalBytesWritten/expectedTotalBytes];
     [cell updateCellInformationWithStatus:NKIssueContentStatusDownloading];
-    
 }
 
-
--(void)connection:(NSURLConnection *)connection didWriteData:(long long)bytesWritten totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
-    
+-(void)connection:(NSURLConnection *)connection didWriteData:(long long)bytesWritten totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes
+{
     if ([[UIApplication sharedApplication]applicationState]==UIApplicationStateActive) {
         [self updateProgressOfConnection:connection withTotalBytesWritten:totalBytesWritten expectedTotalBytes:expectedTotalBytes];
     }else{
         NSLog(@"App is backgrounded");
     }
-    
 }
 
 -(void)connectionDidResumeDownloading:(NSURLConnection *)connection totalBytesWritten:(long long)totalBytesWritten expectedTotalBytes:(long long)expectedTotalBytes {
@@ -440,7 +380,6 @@
 
 -(void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL {
     // copy file to destination URL
-    
     NSLog(@"connection:(NSURLConnection *)connectionDidFinishDownloading");
     [self.collectionView reloadData];
     
@@ -534,8 +473,7 @@
                 break;
         }
     }
-   
-    
+  
 }
 #pragma mark - UIAlertViewDelegate
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{

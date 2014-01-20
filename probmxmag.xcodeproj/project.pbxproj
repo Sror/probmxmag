@@ -47,8 +47,6 @@
 		6C459C87187DB4A700890A6A /* AppiraterLocalizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6C459C85187DB4A700890A6A /* AppiraterLocalizable.strings */; };
 		6C551DFF18335E9200CD8187 /* trash@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6C551DFD18335E9200CD8187 /* trash@2x.png */; };
 		6C551E0018335E9200CD8187 /* trash.png in Resources */ = {isa = PBXBuildFile; fileRef = 6C551DFE18335E9200CD8187 /* trash.png */; };
-		6C551E03183362D700CD8187 /* trash-2.png in Resources */ = {isa = PBXBuildFile; fileRef = 6C551E01183362D700CD8187 /* trash-2.png */; };
-		6C551E04183362D700CD8187 /* trash-2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6C551E02183362D700CD8187 /* trash-2@2x.png */; };
 		6C5F83C2183E2A10008C38A0 /* FFCircularProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C5F83BF183E2A10008C38A0 /* FFCircularProgressView.m */; };
 		6C5F83C3183E2A10008C38A0 /* UIColor+iOS7.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C5F83C1183E2A10008C38A0 /* UIColor+iOS7.m */; };
 		6C6CAF23183B57BE0034349F /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C6CAF22183B57BE0034349F /* MapKit.framework */; };
@@ -57,6 +55,7 @@
 		6C834AE0182D289200AB2CF7 /* ExtendNSLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C834ADF182D289200AB2CF7 /* ExtendNSLog.m */; };
 		6C834AE4182D2CA200AB2CF7 /* StoreManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C834AE3182D2CA200AB2CF7 /* StoreManager.m */; };
 		6C8A9C1E182CCE15002800C5 /* FPKReaderBundle.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 6C8A9C1D182CCE15002800C5 /* FPKReaderBundle.bundle */; };
+		6C9A42AB18890F6C00A04ED9 /* NavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C9A42AA18890F6C00A04ED9 /* NavigationController.m */; };
 		6CB1C1921843C1DE00AB4883 /* FPKYouTube.m in Sources */ = {isa = PBXBuildFile; fileRef = 6CB1C18D1843C1DE00AB4883 /* FPKYouTube.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		6CB6B7E41828DD8A00CB9BC2 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6CB6B7E31828DD8A00CB9BC2 /* Images.xcassets */; };
 		6CB6B7E71828E04800CB9BC2 /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6CB6B7E51828E04800CB9BC2 /* icon@2x.png */; };
@@ -204,8 +203,6 @@
 		6C459C86187DB4A700890A6A /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = AppiraterLocalizable.strings; sourceTree = "<group>"; };
 		6C551DFD18335E9200CD8187 /* trash@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "trash@2x.png"; sourceTree = "<group>"; };
 		6C551DFE18335E9200CD8187 /* trash.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = trash.png; sourceTree = "<group>"; };
-		6C551E01183362D700CD8187 /* trash-2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "trash-2.png"; sourceTree = "<group>"; };
-		6C551E02183362D700CD8187 /* trash-2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "trash-2@2x.png"; sourceTree = "<group>"; };
 		6C5F83BE183E2A10008C38A0 /* FFCircularProgressView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FFCircularProgressView.h; sourceTree = "<group>"; };
 		6C5F83BF183E2A10008C38A0 /* FFCircularProgressView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FFCircularProgressView.m; sourceTree = "<group>"; };
 		6C5F83C0183E2A10008C38A0 /* UIColor+iOS7.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+iOS7.h"; sourceTree = "<group>"; };
@@ -218,6 +215,8 @@
 		6C834AE2182D2CA200AB2CF7 /* StoreManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoreManager.h; sourceTree = "<group>"; };
 		6C834AE3182D2CA200AB2CF7 /* StoreManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoreManager.m; sourceTree = "<group>"; };
 		6C8A9C1D182CCE15002800C5 /* FPKReaderBundle.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = FPKReaderBundle.bundle; sourceTree = "<group>"; };
+		6C9A42A918890F6C00A04ED9 /* NavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationController.h; sourceTree = "<group>"; };
+		6C9A42AA18890F6C00A04ED9 /* NavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavigationController.m; sourceTree = "<group>"; };
 		6CB1C18C1843C1DE00AB4883 /* FPKYouTube.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FPKYouTube.h; sourceTree = "<group>"; };
 		6CB1C18D1843C1DE00AB4883 /* FPKYouTube.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FPKYouTube.m; sourceTree = "<group>"; };
 		6CB6B7E31828DD8A00CB9BC2 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -778,6 +777,8 @@
 				6C3B82A9182BB8E2007384B3 /* ThirdParty */,
 				6C3B82BF182BB92B007384B3 /* FastPdfKit */,
 				6C834AE1182D2CA200AB2CF7 /* StoreManager */,
+				6C9A42A918890F6C00A04ED9 /* NavigationController.h */,
+				6C9A42AA18890F6C00A04ED9 /* NavigationController.m */,
 				6CDB0857181EE5480048BF65 /* NewsstandDownloader.h */,
 				6CDB0858181EE5480048BF65 /* NewsstandDownloader.m */,
 				6CDB0850181EDDEE0048BF65 /* Publisher.h */,
@@ -831,8 +832,6 @@
 		6CDB0817181E51900048BF65 /* images */ = {
 			isa = PBXGroup;
 			children = (
-				6C551E01183362D700CD8187 /* trash-2.png */,
-				6C551E02183362D700CD8187 /* trash-2@2x.png */,
 				6C551DFD18335E9200CD8187 /* trash@2x.png */,
 				6C551DFE18335E9200CD8187 /* trash.png */,
 				6CB6B7E51828E04800CB9BC2 /* icon@2x.png */,
@@ -945,7 +944,6 @@
 				6CDB083D181E7A5C0048BF65 /* settings.png in Resources */,
 				6CCCD577183B4D0F00DA742B /* Times-Italic.fpkfm in Resources */,
 				6CCCD572183B4D0F00DA742B /* Helvetica-BoldOblique.fpkfm in Resources */,
-				6C551E04183362D700CD8187 /* trash-2@2x.png in Resources */,
 				6CDB081A181E519D0048BF65 /* background.png in Resources */,
 				6CCCD573183B4D0F00DA742B /* Helvetica-Oblique.fpkfm in Resources */,
 				6CDB07E5181E46D50048BF65 /* Main_iPhone.storyboard in Resources */,
@@ -956,7 +954,6 @@
 				6CCCD56F183B4D0F00DA742B /* Courier-Oblique.fpkfm in Resources */,
 				6CCCD570183B4D0F00DA742B /* Courier.fpkfm in Resources */,
 				6CDB081B181E519D0048BF65 /* background@2x.png in Resources */,
-				6C551E03183362D700CD8187 /* trash-2.png in Resources */,
 				6C3BDE4C183B7C6D00B707F3 /* fpkmessage-info.png in Resources */,
 				6CDB07DC181E46D50048BF65 /* InfoPlist.strings in Resources */,
 				6C551DFF18335E9200CD8187 /* trash@2x.png in Resources */,
@@ -1014,6 +1011,7 @@
 				6C3B82BC182BB8E3007384B3 /* unzip.c in Sources */,
 				6CBC8C1E184A2A0600234EA2 /* TransitionImageView.m in Sources */,
 				6C3B8332182BB92C007384B3 /* SearchResultCellView.m in Sources */,
+				6C9A42AB18890F6C00A04ED9 /* NavigationController.m in Sources */,
 				6CDB0859181EE5480048BF65 /* NewsstandDownloader.m in Sources */,
 				6CDB0852181EDDEE0048BF65 /* Publisher.m in Sources */,
 				6CDB0810181E4BC20048BF65 /* HeaderImageView.m in Sources */,

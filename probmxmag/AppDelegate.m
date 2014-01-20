@@ -34,9 +34,9 @@
     
     [Appirater setDaysUntilPrompt:1];
     [Appirater setUsesUntilPrompt:10];
-    [Appirater setSignificantEventsUntilPrompt:-1];
-    [Appirater setTimeBeforeReminding:2];
-    //[Appirater setDebug:YES];
+    [Appirater setSignificantEventsUntilPrompt:1];
+    [Appirater setTimeBeforeReminding:1];
+    [Appirater setDebug:NO];
     
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
     for(NKAssetDownload *asset in [nkLib downloadingAssets]) {
@@ -135,7 +135,8 @@
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
     NSLog(@"app will enter foreground");
-    [Appirater appEnteredForeground:YES];
+    //[Appirater appEnteredForeground:YES];
+    
     // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
 }
 
