@@ -43,6 +43,7 @@
 		6C3BDE4A183B7C6C00B707F3 /* FPKMap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C3BDE39183B7C6B00B707F3 /* FPKMap.framework */; };
 		6C3BDE4B183B7C6D00B707F3 /* FPKMessage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C3BDE3B183B7C6B00B707F3 /* FPKMessage.framework */; };
 		6C3BDE4C183B7C6D00B707F3 /* fpkmessage-info.png in Resources */ = {isa = PBXBuildFile; fileRef = 6C3BDE3D183B7C6B00B707F3 /* fpkmessage-info.png */; };
+		6C3D5813188E4ACB0062486D /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C3D5812188E4ACB0062486D /* Parse.framework */; };
 		6C459C83187DB1A700890A6A /* Appirater.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C459C81187DB1A700890A6A /* Appirater.m */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		6C459C87187DB4A700890A6A /* AppiraterLocalizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6C459C85187DB4A700890A6A /* AppiraterLocalizable.strings */; };
 		6C551DFF18335E9200CD8187 /* trash@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 6C551DFD18335E9200CD8187 /* trash@2x.png */; };
@@ -196,6 +197,7 @@
 		6C3BDE39183B7C6B00B707F3 /* FPKMap.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FPKMap.framework; sourceTree = "<group>"; };
 		6C3BDE3B183B7C6B00B707F3 /* FPKMessage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FPKMessage.framework; sourceTree = "<group>"; };
 		6C3BDE3D183B7C6B00B707F3 /* fpkmessage-info.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "fpkmessage-info.png"; sourceTree = "<group>"; };
+		6C3D5812188E4ACB0062486D /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
 		6C459C80187DB1A700890A6A /* Appirater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Appirater.h; sourceTree = "<group>"; };
 		6C459C81187DB1A700890A6A /* Appirater.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Appirater.m; sourceTree = "<group>"; };
 		6C459C82187DB1A700890A6A /* AppiraterDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppiraterDelegate.h; sourceTree = "<group>"; };
@@ -317,6 +319,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6C3D5813188E4ACB0062486D /* Parse.framework in Frameworks */,
 				6C6CAF23183B57BE0034349F /* MapKit.framework in Frameworks */,
 				6C3BDE49183B7C6C00B707F3 /* FPKImage.framework in Frameworks */,
 				6CDB07D4181E46D50048BF65 /* CoreGraphics.framework in Frameworks */,
@@ -740,6 +743,7 @@
 		6CDB07D0181E46D50048BF65 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				6C3D5812188E4ACB0062486D /* Parse.framework */,
 				6C6CAF22183B57BE0034349F /* MapKit.framework */,
 				6CEA7B461833582900ECE4C1 /* MessageUI.framework */,
 				6CDB0839181E77260048BF65 /* SystemConfiguration.framework */,
@@ -1185,6 +1189,7 @@
 					"$(SRCROOT)/probmxmag/FastPdfKit/Extensions/FPKMap.embeddedframework",
 					"$(SRCROOT)/probmxmag/FastPdfKit/Extensions/FPKMessage.embeddedframework",
 					"$(SRCROOT)/",
+					"/Users/alekseyivanov/Documents/iphone\\ develop/probmxmag",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "probmxmag/probmxmag-Prefix.pch";
@@ -1231,6 +1236,7 @@
 					"$(SRCROOT)/probmxmag/FastPdfKit/Extensions/FPKMap.embeddedframework",
 					"$(SRCROOT)/probmxmag/FastPdfKit/Extensions/FPKMessage.embeddedframework",
 					"$(SRCROOT)/",
+					"/Users/alekseyivanov/Documents/iphone\\ develop/probmxmag",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "probmxmag/probmxmag-Prefix.pch";
