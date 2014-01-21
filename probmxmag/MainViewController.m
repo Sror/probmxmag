@@ -12,7 +12,7 @@
 #import "Reachability.h"
 #import "OverlayManager.h"
 #import "ReaderViewController.h"
-
+#import <Parse/Parse.h>
 #define PublisherErrorMessage @"Нет доступа к серверу. Проверьте подключение к интернету."
 #define TITLE_NAVBAR @"Выпуски"
 #define CacheDirectory [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0]
@@ -328,12 +328,16 @@
     [pdfViewController addDocumentDelegate:_overlayManager];
     /** Set the DocumentViewController to obtain access the the conversion methods */
     [_overlayManager setDocumentViewController:(MFDocumentViewController <FPKOverlayManagerDelegate> *)pdfViewController];
+    NSDictionary *dimensions= @{@"documentName": documentName}; //<-parse framework analytic dimensions
     [pdfViewController setDismissBlock:^{
         [Appirater userDidSignificantEvent:YES];
         NSLog(@"user did close reader so we will add user did sugnificant event");
         [self willRotateToInterfaceOrientation:[[UIApplication sharedApplication]statusBarOrientation] duration:0];
+        
+        [PFAnalytics trackEvent:@"will close pdf" dimensions:dimensions];
         [self dismissViewControllerAnimated:YES completion:Nil];
     }];
+    [PFAnalytics trackEvent:@"will open pdf" dimensions:dimensions];
     [self presentViewController:pdfViewController animated:YES completion:nil];
 }
 
@@ -381,6 +385,8 @@
 -(void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL {
     // copy file to destination URL
     NSLog(@"connection:(NSURLConnection *)connectionDidFinishDownloading");
+    NSDictionary*dimensions=@{@"destinationURL": [destinationURL path]}; //parse framework analytic dimension
+    [PFAnalytics trackEvent:@"finish downloading" dimensions:dimensions];
     [self.collectionView reloadData];
     
     if (!UIApplication.sharedApplication.applicationState == UIApplicationStateActive)

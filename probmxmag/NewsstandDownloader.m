@@ -147,7 +147,7 @@
                 NSLog(@"unzip success in block");
                 NSError *error;
                 NSArray *files= [[NSFileManager defaultManager] contentsOfDirectoryAtPath:[fileURL path] error:&error];
-                NSLog(@"files in desctinationPath %@",files );
+                NSLog(@"files in destinationPath %@",files );
                 
                 [self removeZipFileFrom:[destinationURL path]];
                 [delegate connectionDidFinishDownloading:connection destinationURL:destinationURL];
