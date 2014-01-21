@@ -50,7 +50,6 @@
 		6C5F83C2183E2A10008C38A0 /* FFCircularProgressView.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C5F83BF183E2A10008C38A0 /* FFCircularProgressView.m */; };
 		6C5F83C3183E2A10008C38A0 /* UIColor+iOS7.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C5F83C1183E2A10008C38A0 /* UIColor+iOS7.m */; };
 		6C6CAF23183B57BE0034349F /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C6CAF22183B57BE0034349F /* MapKit.framework */; };
-		6C7978801844B70A00AA3C69 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C79787F1844B70A00AA3C69 /* Parse.framework */; };
 		6C7978861844CAEA00AA3C69 /* libFastPdfKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C7978841844CAC800AA3C69 /* libFastPdfKit.a */; };
 		6C834AE0182D289200AB2CF7 /* ExtendNSLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C834ADF182D289200AB2CF7 /* ExtendNSLog.m */; };
 		6C834AE4182D2CA200AB2CF7 /* StoreManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 6C834AE3182D2CA200AB2CF7 /* StoreManager.m */; };
@@ -208,7 +207,6 @@
 		6C5F83C0183E2A10008C38A0 /* UIColor+iOS7.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+iOS7.h"; sourceTree = "<group>"; };
 		6C5F83C1183E2A10008C38A0 /* UIColor+iOS7.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+iOS7.m"; sourceTree = "<group>"; };
 		6C6CAF22183B57BE0034349F /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
-		6C79787F1844B70A00AA3C69 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
 		6C7978841844CAC800AA3C69 /* libFastPdfKit.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFastPdfKit.a; sourceTree = "<group>"; };
 		6C834ADE182D289200AB2CF7 /* ExtendNSLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtendNSLog.h; sourceTree = "<group>"; };
 		6C834ADF182D289200AB2CF7 /* ExtendNSLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExtendNSLog.m; sourceTree = "<group>"; };
@@ -321,7 +319,6 @@
 			files = (
 				6C6CAF23183B57BE0034349F /* MapKit.framework in Frameworks */,
 				6C3BDE49183B7C6C00B707F3 /* FPKImage.framework in Frameworks */,
-				6C7978801844B70A00AA3C69 /* Parse.framework in Frameworks */,
 				6CDB07D4181E46D50048BF65 /* CoreGraphics.framework in Frameworks */,
 				6CDB083A181E77260048BF65 /* SystemConfiguration.framework in Frameworks */,
 				6CDB0838181E77100048BF65 /* MobileCoreServices.framework in Frameworks */,
@@ -743,7 +740,6 @@
 		6CDB07D0181E46D50048BF65 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				6C79787F1844B70A00AA3C69 /* Parse.framework */,
 				6C6CAF22183B57BE0034349F /* MapKit.framework */,
 				6CEA7B461833582900ECE4C1 /* MessageUI.framework */,
 				6CDB0839181E77260048BF65 /* SystemConfiguration.framework */,

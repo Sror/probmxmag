@@ -8,7 +8,7 @@
 
 #import "AppDelegate.h"
 #import "MainViewController.h"
-#import <Parse/Parse.h>
+//#import <Parse/Parse.h>
 
 
 
@@ -49,8 +49,8 @@
     
     
     //Parse apn server implementation
-    [Parse setApplicationId:@"1iJxP2Paprhv5RA5STPQlyvsMFZ9tWGZxTC9LHMH"
-                  clientKey:@"YNxve5HhSdqdySYcuCJGAi2S9Wxc3KofW0ZzmBFu"];
+  //  [Parse setApplicationId:@"1iJxP2Paprhv5RA5STPQlyvsMFZ9tWGZxTC9LHMH"
+   //               clientKey:@"YNxve5HhSdqdySYcuCJGAi2S9Wxc3KofW0ZzmBFu"];
     
     if (application.applicationState != UIApplicationStateBackground) {
         // Track an app open here if we launch with a push, unless
@@ -61,7 +61,7 @@
         BOOL oldPushHandlerOnly = ![self respondsToSelector:@selector(application:didReceiveRemoteNotification:fetchCompletionHandler:)];
         BOOL noPushPayload = ![launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
         if (preBackgroundPush || oldPushHandlerOnly || noPushPayload) {
-            [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
+    //        [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
         }
     }
     
@@ -157,9 +157,9 @@
 didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
     // Store the deviceToken in the current installation and save it to Parse.
-    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-    [currentInstallation setDeviceTokenFromData:deviceToken];
-    [currentInstallation saveInBackground];
+//    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
+ //   [currentInstallation setDeviceTokenFromData:deviceToken];
+//    [currentInstallation saveInBackground];
 }
 
 
@@ -167,7 +167,7 @@ didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 -(void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo{
     NSLog(@"app did receive remote notification with userInfo %@",userInfo);
     if (application.applicationState == UIApplicationStateInactive) {
-        [PFAnalytics trackAppOpenedWithRemoteNotificationPayload:userInfo];
+//certificate        [PFAnalytics trackAppOpenedWithRemoteNotificationPayload:userInfo];
     }
 
 //    [PFPush handlePush:userInfo];
