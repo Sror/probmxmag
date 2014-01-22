@@ -385,8 +385,7 @@
 -(void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL {
     // copy file to destination URL
     NSLog(@"connection:(NSURLConnection *)connectionDidFinishDownloading");
-    NSDictionary*dimensions=@{@"destinationURL": [destinationURL path]}; //parse framework analytic dimension
-    [PFAnalytics trackEvent:@"finish downloading" dimensions:dimensions];
+    
     [self.collectionView reloadData];
     
     if (!UIApplication.sharedApplication.applicationState == UIApplicationStateActive)
@@ -414,8 +413,8 @@
 -(void)subscriptionCompletedWith:(BOOL)success{
     if (success) {
         UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Спасибо" message:@"Подписка оформлена!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        
         [alert show];
+        [PFAnalytics trackEvent:@"subscribed"];
     }
 }
 
@@ -453,6 +452,8 @@
             {
                 //rate app
                 [Appirater rateApp];
+               
+                [PFAnalytics trackEvent:@"rateApp" ];
             }
                 break;
             case 1:

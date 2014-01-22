@@ -9,6 +9,7 @@
 #import "NewsstandDownloader.h"
 #import "Publisher.h"
 #import "SSZipArchive.h"
+#import <Parse/Parse.h>
 
 #define kPostNotificationReceived @"com.yourkioskapp.probmxmag.notificationReceived"
 
@@ -155,6 +156,9 @@
         });
     }
     
+    NSDictionary*dimensions=@{@"file":[[destinationURL absoluteString]lastPathComponent],
+                              @"issueName": issueName}; //parse framework analytic dimension
+    [PFAnalytics trackEvent:@"finish downloading" dimensions:dimensions];
    
     
 }
