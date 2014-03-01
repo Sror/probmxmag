@@ -17,7 +17,6 @@
 
 @interface MainViewController : UIViewController <UICollectionViewDataSource,UICollectionViewDelegate,UICollectionViewDelegateFlowLayout,UIActionSheetDelegate,UIAlertViewDelegate,NewsstandDownloaderDelegate,StoreManagerDelegate>
 {
-   // Publisher *publisher;
     NewsstandDownloader *newsstandDownloader;
     
 }

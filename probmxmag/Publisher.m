@@ -50,32 +50,7 @@ NSString *XMLIssuesLocationIphone = @"http://probmxmag.ru/probmxmagapp/issues_ip
     }
     return self;
 }
-/*
 
-//////////TEST FOR JSON/////
--(void)getIssueJSON{
-    dispatch_async(kBgQueue, ^{
-        NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:NEWSSTAND_MANIFEST_URL]];
-        [self performSelectorOnMainThread:@selector(fetchedData:)
-                               withObject:data waitUntilDone:YES];
-    });
-}
-
-- (void)fetchedData:(NSData *)responseData {
-    //parse out the json data
-    NSError* error;
-    NSDictionary* json = [NSJSONSerialization
-                          JSONObjectWithData:responseData
-                          
-                          options:kNilOptions
-                          error:&error];
-    
-  
-    
-    NSLog(@"json: %@", json);
-}
-//////////TEST FOR JSON/////
-*/
 
 -(NSString*)getIssuesLocation {
     
@@ -155,9 +130,7 @@ NSString *XMLIssuesLocationIphone = @"http://probmxmag.ru/probmxmagapp/issues_ip
 
 -(void)addIssuesInNewsstandLibrary
 {
-    NSLog(@"publisher addIssuesInNewsstandLibrary");
     NKLibrary *nkLib = [NKLibrary sharedLibrary];
-    
     [self.issues enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop)
     {
         NSString *name = [(NSDictionary *)obj objectForKey:@"name"];
@@ -198,44 +171,17 @@ NSString *XMLIssuesLocationIphone = @"http://probmxmag.ru/probmxmagapp/issues_ip
     return  [[self.issues objectAtIndex:index]objectForKey:@"description"];
 }
 
--(UIImage *)coverImageForIssueAtIndex:(NSInteger)index retina:(BOOL)isRetina{
-    
-    //return local image if exist in CacheDirectory
-    NSDictionary* issueInfo = [self.issues objectAtIndex:index];
-    NSString *coverPath = nil;
-    if (isRetina) {
-        coverPath = [issueInfo objectForKey:@"cover_large"];
-    }else{
-        coverPath = [issueInfo objectForKey:@"cover_small"];
-    }
-    //NSString *coverPath=[issueInfo objectForKey:@"cover_large"];
-    NSString *coverName=[coverPath lastPathComponent];
-    /* was
-    NSString *coverName = [self getBothLastComponentsFromPath:coverPath];
-    NSLog(@"coverName %@",coverName);
-     */
-    NSString *coverFilePath = [CacheDirectory stringByAppendingPathComponent:coverName];
-   
-    UIImage *image = [UIImage imageWithContentsOfFile:coverFilePath];
-    return image;
+-(NSString*)coverImageURLForIssueAtIndex:(NSInteger)index forRetina:(BOOL)isRetina{
+    NSDictionary *issueInfo= self.issues[index];
+    NSString* coverPath = isRetina ?  issueInfo[@"cover_large"] : issueInfo[@"cover_small"];
+    return coverPath;
 }
--(UIImage*)headerImageForIssueAtIndex:(NSInteger)index forRetina:(BOOL)isRetina {
-    NSLog(@"headerImageForIssueAtIndex");
-    NSDictionary *issueInfo=[self.issues objectAtIndex:index];
-    NSString *headerPath = nil;
-    if (isRetina) {
-        headerPath = [issueInfo objectForKey:@"header_large"];
-    }else{
-        headerPath = [issueInfo objectForKey:@"header_small"];
-    }
-    //was NSString *headerPath=[issueInfo objectForKey:@"header"];
-   
-    NSString *headerFileName=[headerPath lastPathComponent];
-    
-    NSString *headerFilePath =[CacheDirectory stringByAppendingPathComponent:headerFileName];
-    UIImage *headerImage=[UIImage imageWithContentsOfFile:headerFilePath];
-    return headerImage;
+-(NSString*)headerImageURLForIssueAtIndex:(NSInteger)index forRetina:(BOOL)isRetina{
+    NSDictionary *issueInfo= self.issues[index];
+    NSString* headerPath = isRetina ?  issueInfo[@"header_large"] : issueInfo[@"header_small"];
+    return headerPath;
 }
+
 -(NSURL *)contentURLForIssueWithName:(NSString *)name {
     __block NSURL *contentURL=nil;
     [self.issues enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
@@ -248,114 +194,5 @@ NSString *XMLIssuesLocationIphone = @"http://probmxmag.ru/probmxmagapp/issues_ip
     NSLog(@"Content URL for issue with name %@ is %@",name,contentURL);
     return contentURL;
 }
-/*
--(NSString*)getBothLastComponentsFromPath:(NSString*)path
-{
-    NSLog(@"getBothLastComponentsFromPath");
-    NSString *filePath = [path lastPathComponent];
-    NSLog(@"path lastpathComponent %@",[path lastPathComponent]);
-    NSArray* components = [path pathComponents];
-    NSLog(@"components count %d",[components count]);
-    if([components count] > 1)
-    {
-        int count = [components count];
-        filePath = [NSString stringWithFormat:@"%@/%@", [components objectAtIndex:count - 2], [components objectAtIndex:count - 1]];
-        NSLog(@"filePath: %@",filePath);
-    }
-    
-    return filePath;
-}
-*/
--(void)setCoverOfIssueAtIndex:(NSInteger)index  forRetina:(BOOL)isRetina completionBlock:(void(^)(UIImage *img))block {
-    NSURL *coverURL= nil;
-    if (isRetina) {
-        coverURL = [NSURL URLWithString:[[self issueAtIndex:index]objectForKey:@"cover_large"]];
-    }else{
-        coverURL = [NSURL URLWithString:[[self issueAtIndex:index]objectForKey:@"cover_small"]];
-    }
-    //NSURL* coverURL = [NSURL URLWithString:[[self issueAtIndex:index]objectForKey:@"cover_large"]];
-    NSString* coverFileName=[coverURL lastPathComponent];
-   
-    NSString *coverFilePath = [CacheDirectory stringByAppendingPathComponent:coverFileName];
-    UIImage *image = [UIImage imageWithContentsOfFile:coverFilePath];
-    if(image) {
-        block(image);
-    } else {
-        //background downloading issue cover image
-        [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0),
-                       ^{
-                           NSData *imageData = [NSData dataWithContentsOfURL:coverURL];
-                           UIImage *image = [UIImage imageWithData:imageData];
-                           if(image) {
-                               [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
-                               [imageData writeToFile:coverFilePath atomically:YES];
-                              // NSLog(@"cover image has written to %@",coverFilePath);
-                               block(image);
-                           }
-                       });
-    }
-}
--(void)setHeaderImageOfIssueAtIndex:(NSUInteger)index forRetina:(BOOL)isRetina completionBlock:(void(^)(UIImage *img))block {
-    NSLog(@"setHeaderImageOfIssueAtIndex %d forRetina %d",index, (int)isRetina);
-    NSURL *headerURL =nil;
-    if (isRetina==YES) {
-        headerURL = [NSURL URLWithString:[[self issueAtIndex:0] objectForKey:@"header_large"]];
-    }else{
-        headerURL = [NSURL URLWithString:[[self issueAtIndex:0] objectForKey:@"header_small"]];
-    }
-    //NSURL* headerURL = [NSURL URLWithString:[[self issueAtIndex:0] objectForKey:@"header"]];
-    NSString *headerFileName = [headerURL lastPathComponent];
-    NSString *headerFilePath = [CacheDirectory stringByAppendingPathComponent:headerFileName];
-    UIImage *image =[UIImage imageWithContentsOfFile:headerFilePath];
-    if (image)
-    {
-        block(image);
-    }else{
-        //background downloading issue cover image
-        [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
-        
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0),
-                       ^{
-                           NSData *imageData = [NSData dataWithContentsOfURL:headerURL];
-                           UIImage *image = [UIImage imageWithData:imageData];
-                           if(image) {
-                               [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
-                               [imageData writeToFile:headerFilePath atomically:YES];
-                               NSLog(@"header image has written to %@",headerFilePath);
-                               block(image);
-                           }
-                       });
-    }
 
-}
-/*
--(UIImage *)coverImageForIssue:(NKIssue *)nkIssue
-{
-    NSLog(@"coverImageForIssue");
-    NSString *name = nkIssue.name;
-    for(NSDictionary *issueInfo in self.issues) {
-       
-        if([name isEqualToString:[issueInfo objectForKey:@"name"]])
-        {
-            NSString *coverPath = [issueInfo objectForKey:@"SOURCE"];
-            NSString *coverName= [ coverPath lastPathComponent];
-            //was NSString *coverName = [self getBothLastComponentsFromPath:coverPath];
-            NSString *coverFilePath = [CacheDirectory stringByAppendingPathComponent:coverName];
-            UIImage *image = [UIImage imageWithContentsOfFile:coverFilePath];
-            return image;
-        }
-    }
-    NSLog(@"returning nil image cover for issue %@",nkIssue);
-    return nil;
-
-}
- */
-/*
--(NSString *)downloadPathForIssue:(NKIssue *)nkIssue {
-    NSLog(@"downloadPathForIssue %@",[[nkIssue.contentURL path] stringByAppendingPathComponent:[nkIssue.name stringByAppendingString:@".pdf"]]);
-    return [[nkIssue.contentURL path] stringByAppendingPathComponent:[nkIssue.name stringByAppendingString:@".pdf"]];
-}
-*/
 @end

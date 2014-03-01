@@ -12,6 +12,7 @@
 #import "Reachability.h"
 #import "OverlayManager.h"
 #import "ReaderViewController.h"
+#import "UIImageView+WebCache.h"
 #import <Parse/Parse.h>
 #define PublisherErrorMessage @"Нет доступа к серверу. Проверьте подключение к интернету."
 #define TITLE_NAVBAR @"Выпуски"
@@ -89,17 +90,14 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 -(void)loadIssues{
-    
     self.navigationItem.title = @"Загрузка...";
     self.collectionView.alpha = 0.0;
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(publisherReady:) name:PublisherDidUpdate object:self.publisher];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(publisherFailed:) name:PublisherFailedUpdate object:self.publisher];
-    
     [self.publisher getIssuesList];
 }
 
@@ -162,23 +160,14 @@
 
 
 -(void)loadHeader{
-    
-    UIImage *headerImage=[self.publisher headerImageForIssueAtIndex:0 forRetina:isRetina];
-    if(headerImage){
-        NSLog(@"set header from local image");
-        [self.headerImageView.activityIndicator stopAnimating];
-        [self.headerImageView setImage:headerImage];
-    }else{
-        [self.headerImageView setImage:nil];
+    NSURL *url = [NSURL URLWithString:[self.publisher headerImageURLForIssueAtIndex:0 forRetina:isRetina]];
+    if (url) {
         [self.headerImageView.activityIndicator startAnimating];
-        __weak HeaderImageView *self_ = self.headerImageView;
-       [self.publisher setHeaderImageOfIssueAtIndex:0 forRetina:isRetina completionBlock:^(UIImage*img)
-        {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self_.activityIndicator stopAnimating];
-                [self_ setImage:img];
-            });
+        [self.headerImageView setImageWithURL:url completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType) {
+        [self.headerImageView.activityIndicator stopAnimating];
         }];
+    }else{
+        NSLog(@"Error: wrong header image url in xml file");
     }
 }
 
@@ -213,23 +202,17 @@
     [cell.delButton setTag:indexPath.row];
     
     [cell.delButton addTarget:self action:@selector(delButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    //cover image
-    UIImage *coverImage=[self.publisher coverImageForIssueAtIndex:indexPath.row retina:isRetina];
-    if(coverImage){
-        [cell.imageView setImage:coverImage];
-        [cell.activityIndicator stopAnimating];
-        [cell.imageView setTag:indexPath.row];
-    }else{
-        [cell.imageView setImage:nil];
+    //set cover image
+    NSURL *coverURL =[NSURL URLWithString:[self.publisher coverImageURLForIssueAtIndex:indexPath.row forRetina:isRetina]];
+    if (coverURL) {
         [cell.activityIndicator startAnimating];
-        [self.publisher setCoverOfIssueAtIndex:indexPath.row forRetina:isRetina completionBlock:^(UIImage*img){
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [cell.activityIndicator stopAnimating];
-                [cell.imageView setImage:img];
-                [cell.imageView setTag:indexPath.row];
-            });
+        [cell.imageView setImageWithURL:coverURL completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType) {
+            [cell.activityIndicator stopAnimating];
         }];
+    }else{
+        NSLog(@"Error: wrong cover image url for issue #%I",indexPath.row);
     }
+    [cell.imageView setTag:indexPath.row];
     if (issue.status == NKIssueContentStatusDownloading) {
         [cell.circularProgressView setAlpha:1.0];
     }
@@ -333,11 +316,12 @@
         [Appirater userDidSignificantEvent:YES];
         NSLog(@"user did close reader so we will add user did sugnificant event");
         [self willRotateToInterfaceOrientation:[[UIApplication sharedApplication]statusBarOrientation] duration:0];
-        
-        [PFAnalytics trackEvent:@"will close pdf" dimensions:dimensions];
+#warning comment below line when develop
+        //[PFAnalytics trackEvent:@"will close pdf" dimensions:dimensions];
         [self dismissViewControllerAnimated:YES completion:Nil];
     }];
-    [PFAnalytics trackEvent:@"will open pdf" dimensions:dimensions];
+#warning comment below line when develop
+    //[PFAnalytics trackEvent:@"will open pdf" dimensions:dimensions];
     [self presentViewController:pdfViewController animated:YES completion:nil];
 }
 
@@ -414,7 +398,8 @@
     if (success) {
         UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"Спасибо" message:@"Подписка оформлена!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
-        [PFAnalytics trackEvent:@"subscribed"];
+#warning comment below line when develop
+        //[PFAnalytics trackEvent:@"subscribed"];
     }
 }
 
@@ -452,8 +437,8 @@
             {
                 //rate app
                 [Appirater rateApp];
-               
-                [PFAnalytics trackEvent:@"rateApp" ];
+#warning comment below line when develop
+                //[PFAnalytics trackEvent:@"rateApp" ];
             }
                 break;
             case 1:
